@@ -1,0 +1,3332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16a34a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Susu">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%2316a34a"/><text x="50" y="68" font-size="56" text-anchor="middle" fill="white" font-family="system-ui,sans-serif">◎</text></svg>'>
+<title>Susu</title>
+<style>
+  :root{
+    --bg:#f7f8fa;--card:#fff;--ink:#1f2937;--muted:#6b7280;--soft:#9ca3af;
+    --line:#e5e7eb;--green:#16a34a;--green-dark:#15803d;--green-soft:#f0fdf4;
+    --amber:#d97706;--amber-soft:#fffbeb;--red:#dc2626;--red-soft:#fef2f2;
+    --blue:#2563eb;--blue-soft:#eff6ff;--purple:#7c3aed;--purple-soft:#f5f3ff;
+    --r:16px;--shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px -12px rgba(0,0,0,.1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.5;
+    -webkit-tap-highlight-color:transparent}
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px}
+  @media(max-width:600px){.wrap{padding:0 14px}}
+
+  header{padding:24px 0 12px}
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+  .logo{width:44px;height:44px;border-radius:14px;flex:none;
+    background:linear-gradient(135deg,var(--green),var(--green-dark));
+    display:grid;place-items:center;font-size:22px;color:#fff;
+    box-shadow:0 4px 12px -4px rgba(22,163,74,.5)}
+  .title{min-width:0;flex:1}
+  .title-btn{appearance:none;border:0;background:transparent;padding:0;margin:0;
+    font:inherit;color:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;
+    max-width:100%;text-align:left;border-radius:8px}
+  .title-btn:hover .title-caret{color:var(--green)}
+  .title-btn #groupName{font-size:20px;font-weight:700;letter-spacing:-.01em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .title-caret{font-size:11px;color:var(--muted);flex:none;transition:color .15s}
+  .title p{margin:2px 0 0;font-size:13px;color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .agent-label{display:inline-flex;align-items:center;gap:5px;
+    font-size:11.5px;font-weight:600;margin-top:4px;
+    background:var(--purple-soft);color:var(--purple);
+    padding:2px 9px;border-radius:99px}
+  .agent-label[hidden]{display:none}
+  .agent-label::before{content:"👤";font-size:10px}
+  .cycle-badge{background:#fff;border:1px solid var(--line);padding:8px 14px;
+    border-radius:99px;font-size:13px;font-weight:600;box-shadow:var(--shadow);
+    white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+  .cycle-badge span{color:var(--green);font-size:15px}
+  .net-dot{display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:var(--green);transition:.2s;flex:none}
+  .net-dot.offline{background:var(--amber)}
+  .net-dot.memory{background:var(--red);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  nav{padding:8px 0 20px}
+  .tabs{display:flex;gap:4px;background:#fff;border:1px solid var(--line);
+    padding:4px;border-radius:14px;box-shadow:var(--shadow)}
+  .tab{flex:1;appearance:none;border:0;background:transparent;cursor:pointer;
+    font:inherit;font-size:14px;font-weight:600;color:var(--muted);
+    padding:11px 8px;border-radius:10px;transition:.15s;white-space:nowrap}
+  .tab:hover{color:var(--ink)}
+  .tab.active{background:var(--green);color:#fff;box-shadow:0 2px 8px -2px rgba(22,163,74,.4)}
+  .tab.active.master-tab{background:var(--purple);box-shadow:0 2px 8px -2px rgba(124,58,237,.4)}
+  .tab[hidden]{display:none}
+
+  main{padding-bottom:60px}
+  .view{display:none}
+  .view.active{display:block}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+  @media(max-width:600px){.card{padding:18px}}
+  .card-title{font-size:12px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--muted);margin:0 0 12px}
+
+  .warn-banner{background:var(--red-soft);border:1px solid #fecaca;border-radius:12px;
+    padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;
+    justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13.5px;color:var(--red)}
+  .warn-banner[hidden]{display:none}
+  .warn-banner strong{font-weight:700}
+
+  .hero{background:linear-gradient(135deg,var(--green),var(--green-dark));
+    color:#fff;border-radius:var(--r);padding:26px;
+    box-shadow:0 12px 32px -16px rgba(22,163,74,.6);margin-bottom:16px}
+  @media(max-width:600px){.hero{padding:22px 18px}}
+  .hero-top{display:flex;justify-content:space-between;align-items:baseline;
+    gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .hero-top .label{font-size:13px;color:rgba(255,255,255,.8);font-weight:500}
+  .hero-top .value{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .hero-top .value small{font-size:16px;opacity:.75;font-weight:500}
+  .hero-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.2);
+    overflow:hidden;margin-bottom:14px}
+  .hero-bar > i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .5s ease}
+  .hero-info{display:flex;justify-content:space-between;align-items:center;
+    gap:12px;flex-wrap:wrap;font-size:14px}
+  .hero-info .meta{color:rgba(255,255,255,.85)}
+  .hero-btn{appearance:none;border:0;cursor:pointer;font:inherit;background:#fff;
+    color:var(--green-dark);font-weight:700;padding:10px 18px;border-radius:10px;
+    font-size:14px;transition:.15s;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .hero-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .hero-btn:disabled{opacity:.55;cursor:not-allowed;
+    background:rgba(255,255,255,.25);color:#fff;box-shadow:none}
+
+  .unpaid-list{display:flex;flex-direction:column;gap:8px}
+  .unpaid-row{display:flex;align-items:center;gap:12px;padding:12px 14px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;transition:.15s}
+  .unpaid-row:hover{border-color:#d1d5db;background:#fafbfc}
+  .avatar{width:38px;height:38px;border-radius:50%;flex:none;
+    display:grid;place-items:center;font-size:13px;font-weight:700;
+    color:#fff;background:var(--green)}
+  .avatar.c1{background:#16a34a}.avatar.c2{background:#0891b2}
+  .avatar.c3{background:#7c3aed}.avatar.c4{background:#db2777}
+  .avatar.c5{background:#ea580c}.avatar.c6{background:#0284c7}
+  .unpaid-row .who{flex:1;min-width:0}
+  .unpaid-row .who .name{font-weight:600;font-size:15px;line-height:1.3;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .unpaid-row .who .ph{font-size:12.5px;color:var(--muted)}
+  .unpaid-row .actions{display:flex;gap:6px;flex-wrap:wrap}
+
+  .btn{appearance:none;font:inherit;font-size:14px;font-weight:600;cursor:pointer;
+    border-radius:10px;padding:9px 14px;border:1px solid var(--line);background:#fff;
+    color:var(--ink);transition:.15s;display:inline-flex;align-items:center;gap:6px;
+    text-decoration:none;white-space:nowrap}
+  .btn:hover{background:#f9fafb;border-color:#d1d5db}
+  .btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+  .btn.primary:hover{background:var(--green-dark);border-color:var(--green-dark)}
+  .btn.purple{background:var(--purple);border-color:var(--purple);color:#fff}
+  .btn.purple:hover{background:#6d28d9;border-color:#6d28d9}
+  .btn.wa{background:#25d366;border-color:#25d366;color:#fff}
+  .btn.wa:hover{background:#1eb959;border-color:#1eb959}
+  .btn.ghost{background:transparent;border:0;color:var(--soft);padding:8px 10px}
+  .btn.ghost:hover{background:#f3f4f6;color:var(--ink)}
+  .btn.danger{color:var(--red);border-color:#fecaca;background:var(--red-soft)}
+  .btn.danger:hover{background:#fee2e2}
+  .btn.sm{padding:7px 12px;font-size:13px;border-radius:8px}
+  .btn.block{width:100%;justify-content:center;padding:13px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  .people{display:flex;flex-direction:column;gap:10px}
+  .person{display:flex;align-items:center;gap:14px;padding:14px;
+    background:#fff;border:1px solid var(--line);border-radius:14px;transition:.15s}
+  .person:hover{border-color:#d1d5db}
+  .person .avatar{width:44px;height:44px;font-size:14px}
+  .person .info{flex:1;min-width:0}
+  .person .info .name{font-weight:600;font-size:15.5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .person .info .meta{font-size:13px;color:var(--muted);margin-top:2px}
+  .person .info .status{display:inline-flex;align-items:center;gap:5px;
+    font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;margin-top:6px}
+  .status.paid{background:var(--green-soft);color:var(--green-dark)}
+  .status.unpaid{background:var(--amber-soft);color:var(--amber)}
+  .status.next{background:var(--blue-soft);color:var(--blue)}
+  .status.exempt{background:#f3f4f6;color:var(--muted)}
+  .person-actions{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+
+  .toggle{width:48px;height:28px;border-radius:99px;border:0;background:#d1d5db;
+    cursor:pointer;position:relative;transition:.2s;flex:none}
+  .toggle::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;
+    background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .toggle.on{background:var(--green)}
+  .toggle.on::after{left:calc(100% - 25px)}
+  .toggle:disabled{opacity:.4;cursor:not-allowed}
+  .toggle:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+
+  .empty{text-align:center;padding:40px 20px;color:var(--muted);
+    font-size:14.5px;line-height:1.6}
+  .empty .emoji{font-size:36px;display:block;margin-bottom:8px}
+
+  .payout-list{display:flex;flex-direction:column;margin:0 -6px}
+  .payout-row{display:flex;align-items:center;gap:12px;padding:11px 6px;
+    border-top:1px solid var(--line);font-size:14px;transition:.15s}
+  .payout-row:first-child{border-top:0;padding-top:2px}
+  .payout-row:last-child{padding-bottom:2px}
+  .payout-cycle{font-size:11px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.06em;min-width:56px;flex:none}
+  .payout-who{flex:1;display:flex;align-items:center;gap:10px;min-width:0}
+  .payout-who .avatar{width:30px;height:30px;font-size:11px}
+  .payout-who .who-text{min-width:0;flex:1}
+  .payout-name{font-weight:600;font-size:14.5px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .payout-name.removed{color:var(--muted);font-style:italic;font-weight:500}
+  .payout-date{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .payout-amt{font-weight:700;font-variant-numeric:tabular-nums;
+    font-size:14.5px;white-space:nowrap;color:var(--ink)}
+  .payout-empty{text-align:center;padding:22px 12px;color:var(--muted);
+    font-size:13.5px;line-height:1.5}
+
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;font:inherit;font-size:16px;padding:12px 14px;
+    border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);transition:.15s}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--green);
+    box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+  .field .hint{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:400}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:520px){.field-row{grid-template-columns:1fr}}
+
+  .toggle-card{display:flex;align-items:center;justify-content:space-between;
+    gap:12px;margin-bottom:16px;padding:12px 14px;background:#fafbfc;
+    border:1px solid var(--line);border-radius:12px}
+  .toggle-card .tc-text{flex:1;min-width:0}
+  .toggle-card .tc-title{font-size:13px;font-weight:600;color:var(--ink)}
+  .toggle-card .tc-hint{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4}
+
+  .pay-footer{background:#fff;border:1px solid var(--line);border-radius:var(--r);
+    padding:16px 20px;box-shadow:var(--shadow);display:flex;align-items:center;
+    justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .pay-footer .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.06em;font-weight:600}
+  .pay-footer .num{font-size:18px;font-weight:700;font-family:ui-monospace,"SF Mono",Menlo,monospace}
+  .pay-footer .num.empty{color:var(--soft);font-size:14px;font-weight:500;font-family:inherit}
+
+  .detect-panel{background:#fafbfc;border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin-bottom:16px}
+  .detect-row{display:flex;justify-content:space-between;align-items:center;
+    gap:12px;padding:8px 0;font-size:14px;border-bottom:1px dashed #eef0f3;flex-wrap:wrap}
+  .detect-row:last-child{border-bottom:0}
+  .detect-row .k{color:var(--muted);font-weight:500}
+  .detect-row .v{font-weight:600;color:var(--ink);text-align:right;
+    font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:13.5px}
+  .detect-row .v.auto{color:var(--green-dark)}
+  .detect-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+
+  .status-chip{display:inline-flex;align-items:center;gap:5px;
+    font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;
+    text-transform:uppercase;letter-spacing:.05em}
+  .status-chip.ok{background:var(--green-soft);color:var(--green-dark)}
+  .status-chip.warn{background:var(--amber-soft);color:var(--amber)}
+  .status-chip.err{background:var(--red-soft);color:var(--red)}
+  .status-chip.info{background:var(--blue-soft);color:var(--blue)}
+  .status-chip.purple{background:var(--purple-soft);color:var(--purple)}
+
+  .group-list{display:flex;flex-direction:column}
+  .group-row{display:flex;align-items:center;gap:6px;padding:12px 4px;
+    border-bottom:1px solid var(--line)}
+  .group-row:first-child{padding-top:4px}
+  .group-row:last-child{border-bottom:0;padding-bottom:4px}
+  .group-row.active .group-name{color:var(--green-dark)}
+  .group-pick{flex:1;text-align:left;background:transparent;border:0;cursor:pointer;
+    font:inherit;color:inherit;padding:6px 4px;min-width:0;border-radius:8px}
+  .group-pick:hover{background:#f9fafb}
+  .group-name{font-weight:600;font-size:15px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .group-meta{font-size:12.5px;color:var(--muted);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .group-check{color:var(--green);font-weight:700;font-size:16px;flex:none;
+    width:20px;text-align:center}
+  .group-agent{font-size:11px;font-weight:600;color:var(--purple);
+    background:var(--purple-soft);padding:2px 7px;border-radius:99px;margin-left:4px}
+
+  /* Master dashboard */
+  .fee-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px}
+  @media(max-width:520px){.fee-stats{grid-template-columns:1fr 1fr}}
+  .fee-stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+  .fee-stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.06em;font-weight:700;margin-bottom:4px}
+  .fee-stat .val{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .fee-stat .val.settled{color:var(--green-dark)}
+  .fee-stat .val.pending{color:var(--amber)}
+
+  .agent-row{display:flex;align-items:center;gap:8px;padding:12px 0;
+    border-top:1px solid var(--line);flex-wrap:wrap}
+  .agent-row:first-child{border-top:0;padding-top:4px}
+  .agent-row .avatar{width:40px;height:40px;font-size:13px;background:var(--purple)}
+  .agent-row .info{flex:1;min-width:140px}
+  .agent-row .name{font-weight:600;font-size:15px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .agent-row .meta{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .agent-row .fees{font-size:14px;font-weight:700;color:var(--green-dark);
+    text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  .circle-row{display:flex;align-items:center;gap:10px;padding:10px 0;
+    border-top:1px solid var(--line);flex-wrap:wrap}
+  .circle-row:first-child{border-top:0;padding-top:2px}
+  .circle-row .info{flex:1;min-width:140px}
+  .circle-row .name{font-weight:600;font-size:14.5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .circle-row .meta{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .circle-row .fees{font-size:13.5px;font-weight:700;color:var(--green-dark);
+    font-variant-numeric:tabular-nums}
+  .circle-row select{padding:6px 10px;font-size:12.5px;font-family:inherit;
+    border:1px solid var(--line);border-radius:8px;background:#fff;
+    color:var(--ink);cursor:pointer}
+
+  /* Login screen */
+  #loginScreen{
+    position:fixed;inset:0;background:var(--bg);z-index:1000;overflow-y:auto;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  #loginScreen[hidden]{display:none !important}
+  .login-card{
+    width:100%;max-width:380px;background:#fff;border:1px solid var(--line);
+    border-radius:20px;padding:28px 24px;box-shadow:0 20px 60px -30px rgba(0,0,0,.2);
+  }
+  .login-logo{
+    width:64px;height:64px;border-radius:20px;margin:0 auto 16px;
+    background:linear-gradient(135deg,var(--green),var(--green-dark));
+    display:grid;place-items:center;font-size:34px;color:#fff;
+    box-shadow:0 8px 24px -8px rgba(22,163,74,.5);
+  }
+  .login-card h1{margin:0 0 4px;font-size:22px;font-weight:700;text-align:center}
+  .login-card > p{margin:0 0 24px;font-size:13.5px;color:var(--muted);text-align:center;line-height:1.5}
+  .login-tabs{
+    display:flex;gap:4px;background:#f7f8fa;border:1px solid var(--line);
+    padding:4px;border-radius:12px;margin-bottom:20px;
+  }
+  .login-tab{
+    flex:1;appearance:none;border:0;background:transparent;cursor:pointer;
+    font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);
+    padding:9px 8px;border-radius:8px;transition:.15s;white-space:nowrap;
+  }
+  .login-tab:hover:not(:disabled){color:var(--ink)}
+  .login-tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .login-tab:disabled{opacity:.4;cursor:not-allowed}
+  .login-hint{font-size:12px;color:var(--muted);text-align:center;margin:16px 0 0;line-height:1.5}
+
+  .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));
+    transform:translate(-50%,20px);background:#111827;color:#fff;
+    padding:12px 22px;border-radius:99px;font-size:14px;font-weight:500;
+    opacity:0;pointer-events:none;transition:.25s;z-index:2000;max-width:92vw;
+    box-shadow:0 10px 30px -10px rgba(0,0,0,.4);
+    display:flex;align-items:center;gap:10px;justify-content:center}
+  .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .toast span{text-align:center}
+  .toast-btn{background:transparent;border:1px solid rgba(255,255,255,.5);
+    color:#fff;padding:5px 11px;border-radius:99px;font:inherit;font-size:13px;
+    font-weight:600;cursor:pointer;white-space:nowrap;flex:none}
+  .toast-btn:hover{background:rgba(255,255,255,.15)}
+
+  dialog{border:0;border-radius:18px;padding:0;width:min(440px,92vw);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.4);background:#fff}
+  dialog::backdrop{background:rgba(17,24,39,.45);backdrop-filter:blur(2px)}
+  .dlg-head{padding:24px 24px 0}
+  .dlg-head h3{margin:0;font-size:20px;font-weight:700}
+  .dlg-head p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+  .dlg-body{padding:20px 24px 4px}
+  .dlg-foot{padding:14px 24px 22px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div id="loginScreen" hidden></div>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="brand-left">
+        <div class="logo">◎</div>
+        <div class="title">
+          <button class="title-btn" data-action="open-groups" type="button" aria-haspopup="dialog">
+            <span id="groupName">Susu</span>
+            <span class="title-caret" aria-hidden="true">▼</span>
+          </button>
+          <p id="groupSub">—</p>
+          <span id="agentLabel" class="agent-label" hidden></span>
+        </div>
+      </div>
+      <div class="cycle-badge">
+        Cycle <span id="cycleNum">1</span>
+        <span class="net-dot" id="netDot" title="Storage / network status"></span>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="tabs">
+      <button class="tab active" data-view="home">Home</button>
+      <button class="tab" data-view="people">People</button>
+      <button class="tab" data-view="settings">Settings</button>
+      <button class="tab master-tab" data-view="master">Master</button>
+    </div>
+  </nav>
+
+  <main>
+    <div id="memoryWarning" class="warn-banner" hidden>
+      <span><strong>⚠ Storage unavailable</strong> — changes won't persist after closing.</span>
+      <button class="btn sm danger" data-action="export-backup">Export backup now</button>
+    </div>
+    <section id="view-home" class="view active"></section>
+    <section id="view-people" class="view"></section>
+    <section id="view-settings" class="view"></section>
+    <section id="view-master" class="view"></section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<input type="file" id="importFile" accept=".json,application/json" style="display:none">
+
+<dialog id="memberDialog">
+  <form method="dialog" id="memberForm">
+    <div class="dlg-head">
+      <h3 id="dlgTitle">Add member</h3>
+      <p id="dlgSub">Everyone gets a turn to receive.</p>
+    </div>
+    <div class="dlg-body">
+      <div class="field">
+        <label for="fName">Name</label>
+        <input id="fName" required maxlength="60" placeholder="e.g. Amina Wanjiru" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="fPhone">WhatsApp number</label>
+        <input id="fPhone" maxlength="24" placeholder="+254 712 345 600" autocomplete="off" inputmode="tel">
+        <div class="hint">Used for receipts, reminders and updates</div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn" id="dlgCancel">Cancel</button>
+      <button type="submit" class="btn primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="groupDialog">
+  <div class="dlg-head">
+    <h3>Your circles</h3>
+    <p>Switch, rename, or start a new susu</p>
+  </div>
+  <div class="dlg-body">
+    <div id="groupList" class="group-list"></div>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn" data-action="close-groups">Close</button>
+    <button type="button" class="btn primary" data-action="new-group">＋ New circle</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+/* ═══════════════════════════════════════════════════════════════════
+   0. APP CONSTANTS
+   ═══════════════════════════════════════════════════════════════════ */
+const APP_VERSION = "9.4.0";
+const KEY = "susu-v9";
+const LEGACY_KEY_V8 = "susu-v8";
+const LEGACY_KEY_V7 = "susu";
+const SESSION_KEY = "susu-session";
+const APP_TITLE = "Susu Circle";
+const DEFAULT_FEE_PERCENT = 5;
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. STORAGE LAYER
+   ═══════════════════════════════════════════════════════════════════ */
+const Storage = (() => {
+  let mode = "unknown";
+  let db = null;
+  const mem = {};
+
+  async function init() {
+    try {
+      localStorage.setItem("__probe__", "1");
+      localStorage.removeItem("__probe__");
+      mode = "localstorage";
+      return mode;
+    } catch (e) { console.warn("localStorage unavailable:", e.name || e.message); }
+    try {
+      await openIDB();
+      mode = "indexeddb";
+      return mode;
+    } catch (e) { console.warn("IndexedDB unavailable:", e.message); }
+    mode = "memory";
+    return mode;
+  }
+
+  function openIDB() {
+    return new Promise((resolve, reject) => {
+      if (!("indexedDB" in window)) return reject(new Error("No IndexedDB"));
+      let settled = false;
+      const req = indexedDB.open("susu-db", 1);
+      req.onupgradeneeded = ev => {
+        const d = ev.target.result;
+        if (!d.objectStoreNames.contains("kv")) d.createObjectStore("kv");
+      };
+      req.onsuccess = ev => {
+        if (settled) return;
+        settled = true;
+        db = ev.target.result;
+        db.onversionchange = () => { try { db.close(); } catch (_) {} db = null; };
+        resolve();
+      };
+      req.onerror = () => { if (!settled) { settled = true; reject(req.error || new Error("IDB error")); } };
+      req.onblocked = () => { if (!settled) { settled = true; reject(new Error("Blocked")); } };
+      setTimeout(() => { if (!settled) { settled = true; reject(new Error("Timeout")); } }, 3000);
+    });
+  }
+
+  async function get(key) {
+    if (mode === "localstorage") {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) { return null; }
+    }
+    if (mode === "indexeddb" && db) {
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction("kv", "readonly");
+          const r = tx.objectStore("kv").get(key);
+          r.onsuccess = () => resolve(r.result ?? null);
+          r.onerror = () => resolve(null);
+        } catch (e) { resolve(null); }
+      });
+    }
+    return mem[key] ?? null;
+  }
+
+  async function set(key, value) {
+    if (mode === "localstorage") {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch (e) {
+        console.warn("localStorage write failed, upgrading:", e.name);
+        try { await openIDB(); mode = "indexeddb"; return set(key, value); }
+        catch (_) { mode = "memory"; mem[key] = value; return false; }
+      }
+    }
+    if (mode === "indexeddb" && db) {
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction("kv", "readwrite");
+          tx.objectStore("kv").put(value, key);
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => { mode = "memory"; mem[key] = value; resolve(false); };
+        } catch (e) { mode = "memory"; mem[key] = value; resolve(false); }
+      });
+    }
+    mem[key] = value;
+    return false;
+  }
+
+  function setSync(key, value) {
+    if (mode === "localstorage") {
+      try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) {}
+    }
+    if (mode === "indexeddb" && db) {
+      try {
+        const tx = db.transaction("kv", "readwrite");
+        tx.objectStore("kv").put(value, key);
+        return true;
+      } catch (e) {}
+    }
+    mem[key] = value;
+    return false;
+  }
+
+  return { init, get, set, setSync, getMode: () => mode };
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. ENVIRONMENT DETECTION
+   ═══════════════════════════════════════════════════════════════════ */
+const TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; } catch (e) { return "UTC"; } })();
+const LOCALE = (() => { try { return (navigator.languages && navigator.languages[0]) || navigator.language || "en-US"; } catch (e) { return "en-US"; } })();
+const IS_FILE = (() => { try { return location.protocol === "file:"; } catch (e) { return false; } })();
+
+const COUNTRY_TO_CURRENCY = {
+  KE:"KES",TZ:"TZS",UG:"UGX",RW:"RWF",BI:"BIF",ET:"ETB",SO:"SOS",SS:"SSP",
+  DJ:"DJF",ER:"ERN",MG:"MGA",MU:"MUR",SC:"SCR",KM:"KMF",
+  NG:"NGN",GH:"GHS",CI:"XOF",SN:"XOF",ML:"XOF",BF:"XOF",TG:"XOF",BJ:"XOF",
+  NE:"XOF",GW:"XOF",GM:"GMD",GN:"GNF",SL:"SLE",LR:"LRD",MR:"MRU",CV:"CVE",
+  CM:"XAF",CF:"XAF",TD:"XAF",GA:"XAF",CG:"XAF",GQ:"XAF",CD:"CDF",AO:"AOA",ST:"STN",
+  ZA:"ZAR",NA:"NAD",BW:"BWP",ZW:"ZWL",ZM:"ZMW",MW:"MWK",MZ:"MZN",LS:"LSL",SZ:"SZL",
+  EG:"EGP",LY:"LYD",TN:"TND",DZ:"DZD",MA:"MAD",SD:"SDG",EH:"MAD",
+  US:"USD",CA:"CAD",MX:"MXN",
+  BR:"BRL",AR:"ARS",CL:"CLP",CO:"COP",PE:"PEN",VE:"VES",EC:"USD",BO:"BOB",
+  PY:"PYG",UY:"UYU",CR:"CRC",PA:"PAB",GT:"GTQ",HN:"HNL",SV:"USD",NI:"NIO",
+  BZ:"BZD",CU:"CUP",DO:"DOP",HT:"HTG",JM:"JMD",TT:"TTD",BB:"BBD",BS:"BSD",
+  GB:"GBP",IE:"EUR",FR:"EUR",DE:"EUR",ES:"EUR",IT:"EUR",NL:"EUR",BE:"EUR",
+  AT:"EUR",PT:"EUR",GR:"EUR",FI:"EUR",LU:"EUR",EE:"EUR",LV:"EUR",LT:"EUR",
+  SI:"EUR",MT:"EUR",CY:"EUR",SK:"EUR",HR:"EUR",MC:"EUR",SM:"EUR",VA:"EUR",
+  AD:"EUR",ME:"EUR",XK:"EUR",
+  CH:"CHF",NO:"NOK",SE:"SEK",DK:"DKK",IS:"ISK",PL:"PLN",CZ:"CZK",HU:"HUF",
+  RO:"RON",BG:"BGN",RS:"RSD",UA:"UAH",RU:"RUB",TR:"TRY",
+  JP:"JPY",CN:"CNY",HK:"HKD",SG:"SGD",KR:"KRW",TW:"TWD",IN:"INR",PK:"PKR",
+  BD:"BDT",LK:"LKR",NP:"NPR",MM:"MMK",TH:"THB",VN:"VND",ID:"IDR",MY:"MYR",PH:"PHP",
+  AE:"AED",SA:"SAR",QA:"QAR",KW:"KWD",BH:"BHD",OM:"OMR",JO:"JOD",LB:"LBP",
+  IL:"ILS",IR:"IRR",IQ:"IQD",SY:"SYP",YE:"YER",AF:"AFN",
+  AU:"AUD",NZ:"NZD",FJ:"FJD",PG:"PGK"
+};
+
+const TIMEZONE_TO_COUNTRY = {
+  "Africa/Nairobi":"KE","Africa/Dar_es_Salaam":"TZ","Africa/Kampala":"UG",
+  "Africa/Kigali":"RW","Africa/Bujumbura":"BI","Africa/Addis_Ababa":"ET",
+  "Africa/Asmara":"ER","Africa/Mogadishu":"SO","Africa/Juba":"SS",
+  "Africa/Djibouti":"DJ","Africa/Antananarivo":"MG","Africa/Port_Louis":"MU",
+  "Africa/Victoria":"SC","Africa/Comoros":"KM",
+  "Africa/Lagos":"NG","Africa/Accra":"GH","Africa/Abidjan":"CI",
+  "Africa/Dakar":"SN","Africa/Bamako":"ML","Africa/Ouagadougou":"BF",
+  "Africa/Lome":"TG","Africa/Porto-Novo":"BJ","Africa/Niamey":"NE",
+  "Africa/Bissau":"GW","Africa/Banjul":"GM","Africa/Conakry":"GN",
+  "Africa/Freetown":"SL","Africa/Monrovia":"LR","Africa/Nouakchott":"MR",
+  "Africa/Praia":"CV",
+  "Africa/Douala":"CM","Africa/Bangui":"CF","Africa/Ndjamena":"TD",
+  "Africa/Libreville":"GA","Africa/Brazzaville":"CG","Africa/Malabo":"GQ",
+  "Africa/Kinshasa":"CD","Africa/Luanda":"AO","Africa/Sao_Tome":"ST",
+  "Africa/Johannesburg":"ZA","Africa/Windhoek":"NA","Africa/Gaborone":"BW",
+  "Africa/Harare":"ZW","Africa/Lusaka":"ZM","Africa/Blantyre":"MW",
+  "Africa/Maputo":"MZ","Africa/Maseru":"LS","Africa/Mbabane":"SZ",
+  "Africa/Cairo":"EG","Africa/Tripoli":"LY","Africa/Tunis":"TN",
+  "Africa/Algiers":"DZ","Africa/Casablanca":"MA","Africa/El_Aaiun":"EH",
+  "Africa/Khartoum":"SD",
+  "America/New_York":"US","America/Chicago":"US","America/Denver":"US",
+  "America/Los_Angeles":"US","America/Anchorage":"US","Pacific/Honolulu":"US",
+  "America/Toronto":"CA","America/Vancouver":"CA","America/Edmonton":"CA",
+  "America/Mexico_City":"MX","America/Sao_Paulo":"BR",
+  "America/Argentina/Buenos_Aires":"AR","America/Santiago":"CL",
+  "America/Bogota":"CO","America/Lima":"PE","America/Caracas":"VE",
+  "Europe/London":"GB","Europe/Dublin":"IE","Europe/Paris":"FR",
+  "Europe/Berlin":"DE","Europe/Madrid":"ES","Europe/Rome":"IT",
+  "Europe/Amsterdam":"NL","Europe/Brussels":"BE","Europe/Vienna":"AT",
+  "Europe/Lisbon":"PT","Europe/Athens":"GR","Europe/Helsinki":"FI",
+  "Europe/Stockholm":"SE","Europe/Oslo":"NO","Europe/Copenhagen":"DK",
+  "Europe/Zurich":"CH","Europe/Warsaw":"PL","Europe/Prague":"CZ",
+  "Europe/Budapest":"HU","Europe/Bucharest":"RO","Europe/Sofia":"BG",
+  "Europe/Belgrade":"RS","Europe/Moscow":"RU","Europe/Kyiv":"UA",
+  "Europe/Istanbul":"TR",
+  "Asia/Tokyo":"JP","Asia/Shanghai":"CN","Asia/Hong_Kong":"HK",
+  "Asia/Singapore":"SG","Asia/Seoul":"KR","Asia/Taipei":"TW",
+  "Asia/Kolkata":"IN","Asia/Calcutta":"IN","Asia/Karachi":"PK",
+  "Asia/Dhaka":"BD","Asia/Colombo":"LK","Asia/Kathmandu":"NP",
+  "Asia/Dubai":"AE","Asia/Riyadh":"SA","Asia/Qatar":"QA",
+  "Asia/Kuwait":"KW","Asia/Bahrain":"BH","Asia/Muscat":"OM",
+  "Asia/Amman":"JO","Asia/Beirut":"LB","Asia/Jerusalem":"IL",
+  "Asia/Tehran":"IR","Asia/Baghdad":"IQ","Asia/Damascus":"SY",
+  "Asia/Aden":"YE","Asia/Kabul":"AF",
+  "Australia/Sydney":"AU","Australia/Melbourne":"AU",
+  "Australia/Brisbane":"AU","Australia/Perth":"AU","Australia/Adelaide":"AU",
+  "Pacific/Auckland":"NZ"
+};
+
+const DIAL_BY_COUNTRY = {
+  KE:"254",TZ:"255",UG:"256",RW:"250",BI:"257",ET:"251",SO:"252",SS:"211",
+  DJ:"253",ER:"291",MG:"261",MU:"230",SC:"248",KM:"269",
+  NG:"234",GH:"233",CI:"225",SN:"221",ML:"223",BF:"226",TG:"228",BJ:"229",
+  NE:"227",GW:"245",GM:"220",GN:"224",SL:"232",LR:"231",MR:"222",CV:"238",
+  CM:"237",CF:"236",TD:"235",GA:"241",CG:"242",GQ:"240",CD:"243",AO:"244",ST:"239",
+  ZA:"27",NA:"264",BW:"267",ZW:"263",ZM:"260",MW:"265",MZ:"258",LS:"266",SZ:"268",
+  EG:"20",LY:"218",TN:"216",DZ:"213",MA:"212",SD:"249",EH:"212",
+  US:"1",CA:"1",GB:"44",AU:"61",NZ:"64",FR:"33",DE:"49",ES:"34",IT:"39",
+  NL:"31",BE:"32",CH:"41",SE:"46",NO:"47",DK:"45",PL:"48",RU:"7",
+  JP:"81",CN:"86",HK:"852",SG:"65",KR:"82",TW:"886",
+  IN:"91",PK:"92",BD:"880",LK:"94",NP:"977",
+  AE:"971",SA:"966",QA:"974",KW:"965",BH:"973",OM:"968",
+  JO:"962",LB:"961",IL:"972",IR:"98",IQ:"964",SY:"963",YE:"967",AF:"93",
+  BR:"55",AR:"54",CL:"56",CO:"57",PE:"51",VE:"58",MX:"52"
+};
+
+function detectCurrencyZone() {
+  let locale = "en-US", tz = "UTC";
+  try {
+    const opts = Intl.DateTimeFormat().resolvedOptions();
+    if (opts.locale) locale = opts.locale;
+    if (opts.timeZone) tz = opts.timeZone;
+  } catch (e) {}
+
+  let region = "";
+  try {
+    const loc = new Intl.Locale(locale);
+    if (loc.region) region = String(loc.region).toUpperCase();
+  } catch (e) {
+    const parts = String(locale).split(/[-_]/);
+    if (parts[1] && /^[A-Za-z]{2}$/.test(parts[1])) region = parts[1].toUpperCase();
+  }
+  if (!region && TIMEZONE_TO_COUNTRY[tz]) region = TIMEZONE_TO_COUNTRY[tz];
+  if (!region) {
+    try {
+      const loc = new Intl.Locale(locale).maximize();
+      if (loc.region) region = String(loc.region).toUpperCase();
+    } catch (e) {}
+  }
+
+  const currency = COUNTRY_TO_CURRENCY[region] || "USD";
+  let countryName = "";
+  try {
+    if (region && typeof Intl.DisplayNames === "function") {
+      countryName = new Intl.DisplayNames([locale], { type: "region" }).of(region) || "";
+    }
+  } catch (e) {}
+
+  return { locale, tz, region, country: countryName, currency, dial: DIAL_BY_COUNTRY[region] || "" };
+}
+const ZONE = detectCurrencyZone();
+const VALID_CURRENCIES = new Set(Object.values(COUNTRY_TO_CURRENCY));
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. MONEY / DATE / PHONE HELPERS
+   ═══════════════════════════════════════════════════════════════════ */
+function makeMoneyFormatter(locale, code) {
+  try {
+    const f = new Intl.NumberFormat(locale, {
+      style: "currency", currency: code,
+      maximumFractionDigits: 0, currencyDisplay: "narrowSymbol"
+    });
+    f.format(0);
+    return f;
+  } catch (e) {
+    try { return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }); }
+    catch (e2) { return { format: n => String(Math.round(n)) }; }
+  }
+}
+function getCurrencySymbol(locale, code) {
+  try {
+    const parts = new Intl.NumberFormat(locale, {
+      style: "currency", currency: code, currencyDisplay: "narrowSymbol"
+    }).formatToParts(0);
+    const sym = parts.find(p => p.type === "currency");
+    return sym ? sym.value : code;
+  } catch (e) { return code; }
+}
+
+function simpleHash(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16);
+}
+
+function genToken() {
+  try {
+    if (crypto && crypto.getRandomValues) {
+      const a = new Uint8Array(16);
+      crypto.getRandomValues(a);
+      return Array.from(a).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (e) {}
+  return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+}
+
+const CYCLE_DAYS = { "Daily":1, "Weekly":7, "Bi-weekly":14, "Monthly":30 };
+const isoDate = (d = new Date()) => {
+  const x = d instanceof Date ? d : new Date(d);
+  return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+};
+function parseDate(s) {
+  if (!s) return null;
+  const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) { const d = new Date(s); return isNaN(d) ? null : d; }
+  const d = new Date(+m[1], +m[2]-1, +m[3]);
+  return isNaN(d) ? null : d;
+}
+function fmtDate(v) {
+  if (!v) return "—";
+  const d = typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) ? parseDate(v) : new Date(v);
+  if (!d || isNaN(d)) return "—";
+  try { return new Intl.DateTimeFormat(LOCALE,{month:"short",day:"numeric",year:"numeric",timeZone:ZONE.tz}).format(d); }
+  catch (e) { return d.toDateString(); }
+}
+function fmtDateTime(v) {
+  if (!v) return "—";
+  const d = v instanceof Date ? v : new Date(v);
+  if (isNaN(d)) return "—";
+  try { return new Intl.DateTimeFormat(LOCALE,{dateStyle:"medium",timeStyle:"short",timeZone:ZONE.tz}).format(d); }
+  catch (e) { return d.toLocaleString(); }
+}
+function addDays(iso, n) {
+  const d = parseDate(iso); if (!d) return iso;
+  d.setDate(d.getDate() + n); return isoDate(d);
+}
+
+const digits = s => String(s || "").replace(/\D/g,"");
+function normalizePhone(raw, dial) {
+  if (!raw) return "";
+  let s = String(raw).trim();
+  if (!s) return "";
+  const plus = s.startsWith("+");
+  s = s.replace(/\D/g,"");
+  if (!s) return "";
+  if (plus) return "+" + s;
+  if (s.startsWith("00")) return "+" + s.slice(2);
+  const d = dial || ZONE.dial;
+  if (d) {
+    if (s.startsWith(d) && s.length >= d.length + 6) return "+" + s;
+    if (s.startsWith("0")) return "+" + d + s.slice(1);
+    return "+" + d + s;
+  }
+  return "+" + s;
+}
+
+const initials = n => String(n||"").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase() || "?";
+const avatarColor = id => {
+  let h = 0; for (const c of String(id)) h = (h*31 + c.charCodeAt(0)) % 6;
+  return h === 0 ? "" : " c" + (h+1);
+};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. SESSION (separate from app data)
+   ═══════════════════════════════════════════════════════════════════ */
+let session = null;   // { role: 'master' } | { role: 'agent', agentId } | null
+
+function getSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function setSession(s) {
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {}
+  session = s;
+}
+function clearSession() {
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+  session = null;
+}
+function isMaster() { return !!(session && session.role === 'master'); }
+function isAgent() { return !!(session && session.role === 'agent' && app && app.agents[session.agentId]); }
+function currentAgent() { return isAgent() ? app.agents[session.agentId] : null; }
+
+function visibleGroupIds() {
+  if (!app) return [];
+  if (isMaster()) return app.groupOrder.slice();
+  if (isAgent()) return app.groupOrder.filter(gid => app.groups[gid] && app.groups[gid].agentId === session.agentId);
+  return [];
+}
+
+function ensureActiveGroupVisible() {
+  const visible = visibleGroupIds();
+  if (!visible.length) return;
+  if (!visible.includes(app.activeGroupId)) {
+    app.activeGroupId = visible[0];
+    state = app.groups[visible[0]];
+    if (state) formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+  }
+}
+
+function parseAgentHash(hashStr) {
+  const h = String(hashStr || "").replace(/^#/, '');
+  if (!h) return null;
+  const params = {};
+  for (const part of h.split('&')) {
+    const eq = part.indexOf('=');
+    if (eq > 0) {
+      try {
+        params[decodeURIComponent(part.slice(0, eq))] = decodeURIComponent(part.slice(eq + 1));
+      } catch (e) {}
+    }
+  }
+  if (params.agent && params.key) return { agentId: params.agent, token: params.key };
+  return null;
+}
+
+function buildAgentLink(agentId) {
+  const a = app && app.agents[agentId];
+  if (!a) return "";
+  try {
+    const url = new URL(location.href);
+    url.hash = `agent=${encodeURIComponent(agentId)}&key=${encodeURIComponent(a.token)}`;
+    return url.toString();
+  } catch (e) {
+    const base = location.href.split('#')[0];
+    return `${base}#agent=${encodeURIComponent(agentId)}&key=${encodeURIComponent(a.token)}`;
+  }
+}
+
+function stripHash() {
+  try {
+    history.replaceState(null, '', location.pathname + location.search);
+  } catch (e) {
+    try { location.hash = ''; } catch (e2) {}
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. STATE
+   ═══════════════════════════════════════════════════════════════════ */
+let app = null;
+let state = null;
+let view = "home";
+let editingId = null;
+let editingAgentId = null;
+let toastTimer = null;
+let saveTimer = null;
+let isLoading = false;
+let formatter = makeMoneyFormatter(LOCALE, ZONE.currency);
+let fileHandle = null;
+
+let channel = null;
+try { channel = new BroadcastChannel("susu-sync"); } catch (e) {}
+
+const ID_RE = /^[A-Za-z0-9_-]{1,24}$/;
+
+function blankGroup(id) {
+  return {
+    id: id || ("g" + Math.random().toString(36).slice(2, 9)),
+    agentId: null,
+    group: {
+      name: "Susu Circle",
+      country: ZONE.country, region: ZONE.region,
+      currency: ZONE.currency, currencyManual: "",
+      dial: ZONE.dial,
+      amount: 1000, frequency: "Weekly",
+      startDate: isoDate(), paybill: "",
+      autoReceipt: false,
+      feePercent: DEFAULT_FEE_PERCENT
+    },
+    cycle: 1,
+    cycleOrder: [],
+    roundPointer: 0,
+    cycleSnapshot: null,
+    members: [],
+    payouts: []
+  };
+}
+
+function blankApp() {
+  const id = "g" + Math.random().toString(36).slice(2, 9);
+  return {
+    version: APP_VERSION,
+    activeGroupId: id,
+    groups: { [id]: blankGroup(id) },
+    groupOrder: [id],
+    agents: {},
+    master: { pin: null },
+    meta: {
+      lastSaved: null, createdAt: new Date().toISOString(),
+      revision: 0, autoSaveFile: false
+    }
+  };
+}
+
+function seed(id) {
+  const s = blankGroup(id);
+  s.cycle = 2;
+  s.group.startDate = addDays(isoDate(), -7);
+  if (s.group.region === "KE") s.group.paybill = "247247";
+  s.group.feePercent = 5;
+  const names = ["Amina Wanjiru","Joseph Otieno","Grace Mwangi","Peter Kamau","Fatuma Ali","David Ochieng"];
+  names.forEach((name, i) => {
+    s.members.push({
+      id: "m" + Math.random().toString(36).slice(2,8),
+      name,
+      phone: s.group.dial ? "+" + s.group.dial + "7123456" + String(10+i) : "",
+      position: i + 1,
+      paid: i < 3 ? [1, 2] : [1],
+      exemptCycle: 0
+    });
+  });
+  s.payouts = [{
+    cycle: 1, memberId: s.members[0].id, memberName: s.members[0].name,
+    gross: 6000, managementFee: 300, feePercent: 5,
+    amount: 5700, date: addDays(s.group.startDate, 6)
+  }];
+  const nonExempt = s.members.filter(m => m.exemptCycle !== s.cycle);
+  s.cycleSnapshot = { amount: s.group.amount, count: nonExempt.length, feePercent: 5 };
+  s.cycleOrder = s.members.slice().sort((a,b) => a.position - b.position).map(m => m.id);
+  s.roundPointer = 1;
+  return s;
+}
+
+function validateGroupState(g) {
+  if (!g || typeof g !== "object") g = blankGroup();
+  if (!g.id || !ID_RE.test(g.id)) g.id = "g" + Math.random().toString(36).slice(2, 9);
+
+  g.agentId = (typeof g.agentId === "string" && ID_RE.test(g.agentId)) ? g.agentId : null;
+
+  if (!g.group || typeof g.group !== "object") g.group = {};
+  const grp = g.group;
+  grp.name = (typeof grp.name === "string" && grp.name.trim()) ? grp.name.trim().slice(0, 60) : "Susu Circle";
+  grp.amount = Math.max(1, parseInt(grp.amount, 10) || 1000);
+  if (!Object.keys(CYCLE_DAYS).includes(grp.frequency)) grp.frequency = "Weekly";
+  if (!grp.startDate || !parseDate(grp.startDate)) grp.startDate = isoDate();
+  if (typeof grp.dial !== "string") grp.dial = ZONE.dial;
+  if (typeof grp.paybill !== "string") grp.paybill = "";
+  if (typeof grp.country !== "string") grp.country = ZONE.country;
+  if (typeof grp.region !== "string") grp.region = ZONE.region;
+  if (typeof grp.currencyManual !== "string") grp.currencyManual = "";
+  grp.autoReceipt = grp.autoReceipt === true;
+
+  if (grp.feePercent == null) {
+    grp.feePercent = 0;
+  } else {
+    let pct = parseInt(grp.feePercent, 10);
+    if (!Number.isFinite(pct)) pct = DEFAULT_FEE_PERCENT;
+    pct = Math.max(0, Math.min(100, pct));
+    grp.feePercent = pct;
+  }
+
+  if (grp.currencyManual && VALID_CURRENCIES.has(grp.currencyManual)) {
+    grp.currency = grp.currencyManual;
+  } else {
+    grp.currencyManual = "";
+    grp.currency = VALID_CURRENCIES.has(ZONE.currency) ? ZONE.currency : "USD";
+  }
+
+  g.cycle = Math.max(1, parseInt(g.cycle, 10) || 1);
+
+  const seenIds = new Set();
+  const rawMembers = Array.isArray(g.members) ? g.members : [];
+  g.members = rawMembers
+    .filter(m => m && typeof m === "object" && typeof m.name === "string" && m.name.trim())
+    .map((m, i) => {
+      let id = (typeof m.id === "string" && ID_RE.test(m.id)) ? m.id : "";
+      if (!id || seenIds.has(id)) id = "m" + Math.random().toString(36).slice(2, 9);
+      seenIds.add(id);
+      const paid = Array.isArray(m.paid)
+        ? [...new Set(m.paid.map(Number).filter(n => Number.isInteger(n) && n >= 1))]
+        : [];
+      paid.sort((a, b) => a - b);
+      return {
+        id,
+        name: String(m.name).trim().slice(0, 60),
+        phone: typeof m.phone === "string" ? m.phone.slice(0, 24) : "",
+        position: Number.isInteger(m.position) ? m.position : (i + 1),
+        paid,
+        exemptCycle: Number.isInteger(m.exemptCycle) && m.exemptCycle >= 0 ? m.exemptCycle : 0
+      };
+    });
+  g.members.sort((a, b) => a.position - b.position)
+           .forEach((m, i) => { m.position = i + 1; });
+
+  const rawPayouts = Array.isArray(g.payouts) ? g.payouts : [];
+  g.payouts = rawPayouts
+    .filter(p => p && Number.isFinite(Number(p.amount)))
+    .map(p => {
+      let mid = (typeof p.memberId === "string" && ID_RE.test(p.memberId)) ? p.memberId : "";
+      if (!mid && typeof p.memberName === "string") {
+        const found = g.members.find(m => m.name === p.memberName);
+        if (found) mid = found.id;
+      }
+      let memberName = typeof p.memberName === "string" ? p.memberName : "";
+      if (!memberName && mid) {
+        const m = g.members.find(x => x.id === mid);
+        if (m) memberName = m.name;
+      }
+      let pct = parseInt(p.feePercent, 10);
+      if (!Number.isFinite(pct)) pct = 0;
+      pct = Math.max(0, Math.min(100, pct));
+      const amount = Math.max(0, parseInt(p.amount, 10) || 0);
+      const managementFee = Math.max(0, parseInt(p.managementFee, 10) || 0);
+      let gross = Math.max(0, parseInt(p.gross, 10) || 0);
+      if (!gross) gross = amount + managementFee;
+      return {
+        cycle: Math.max(0, parseInt(p.cycle, 10) || 0),
+        memberId: mid, memberName,
+        gross, managementFee, feePercent: pct,
+        amount,
+        date: typeof p.date === "string" ? p.date : ""
+      };
+    });
+
+  const memberIds = new Set(g.members.map(m => m.id));
+  g.cycleOrder = Array.isArray(g.cycleOrder) ? g.cycleOrder.filter(id => memberIds.has(id)) : [];
+  if (g.cycleOrder.length === 0 && g.members.length > 0) {
+    g.cycleOrder = g.members.slice().sort((a, b) => a.position - b.position).map(m => m.id);
+    g.roundPointer = 0;
+  }
+  if (typeof g.roundPointer !== "number" || g.roundPointer < 0) g.roundPointer = 0;
+  if (g.roundPointer > g.cycleOrder.length) g.roundPointer = g.cycleOrder.length;
+
+  if (g.cycleSnapshot && typeof g.cycleSnapshot === "object") {
+    const amt = Math.max(1, parseInt(g.cycleSnapshot.amount, 10) || 0);
+    const cnt = Math.max(0, parseInt(g.cycleSnapshot.count, 10) || 0);
+    let fpct = parseInt(g.cycleSnapshot.feePercent, 10);
+    if (!Number.isFinite(fpct)) fpct = 0;
+    fpct = Math.max(0, Math.min(100, fpct));
+    g.cycleSnapshot = (amt > 0 && cnt > 0)
+      ? { amount: amt, count: cnt, feePercent: fpct }
+      : null;
+  } else {
+    g.cycleSnapshot = null;
+  }
+
+  return g;
+}
+
+function validateApp(raw) {
+  if (!raw || typeof raw !== "object") return blankApp();
+  if (!raw.groups && raw.group && Array.isArray(raw.members)) return migrateToV9(raw);
+  if (!raw.groups || typeof raw.groups !== "object") return blankApp();
+
+  const groups = {};
+  const order = [];
+  for (const id of Object.keys(raw.groups)) {
+    const g = raw.groups[id];
+    if (!g || typeof g !== "object") continue;
+    g.id = id;
+    groups[id] = validateGroupState(g);
+    order.push(id);
+  }
+  if (order.length === 0) return blankApp();
+
+  let groupOrder = order;
+  if (Array.isArray(raw.groupOrder)) {
+    const kept = raw.groupOrder.filter(id => groups[id]);
+    for (const id of order) if (!kept.includes(id)) kept.push(id);
+    groupOrder = kept;
+  }
+
+  // Agents
+  const agents = {};
+  if (raw.agents && typeof raw.agents === "object") {
+    for (const aid of Object.keys(raw.agents)) {
+      const a = raw.agents[aid];
+      if (!a || typeof a !== "object") continue;
+      if (!ID_RE.test(aid)) continue;
+      agents[aid] = {
+        id: aid,
+        name: (typeof a.name === "string" && a.name.trim()) ? a.name.trim().slice(0, 60) : "Agent",
+        phone: typeof a.phone === "string" ? a.phone.slice(0, 24) : "",
+        pin: typeof a.pin === "string" ? a.pin : null,
+        token: (typeof a.token === "string" && a.token.length >= 8) ? a.token : genToken(),
+        createdAt: typeof a.createdAt === "string" ? a.createdAt : new Date().toISOString()
+      };
+    }
+  }
+  // Clear dangling agentIds
+  for (const gid of Object.keys(groups)) {
+    const g = groups[gid];
+    if (g.agentId && !agents[g.agentId]) g.agentId = null;
+  }
+
+  const masterPin = (raw.master && typeof raw.master.pin === "string" && raw.master.pin)
+    ? raw.master.pin : null;
+
+  const activeGroupId = groups[raw.activeGroupId] ? raw.activeGroupId : groupOrder[0];
+  const m = raw.meta && typeof raw.meta === "object" ? raw.meta : {};
+  const meta = {
+    lastSaved: m.lastSaved || null,
+    createdAt: m.createdAt || new Date().toISOString(),
+    revision: Number.isInteger(m.revision) && m.revision >= 0 ? m.revision : 0,
+    autoSaveFile: m.autoSaveFile === true
+  };
+
+  return {
+    version: APP_VERSION, activeGroupId,
+    groups, groupOrder,
+    agents,
+    master: { pin: masterPin },
+    meta
+  };
+}
+
+function migrateToV9(old) {
+  if (!old || typeof old !== "object" || !old.group) return blankApp();
+  const id = "g" + Math.random().toString(36).slice(2, 9);
+  const g = {
+    id,
+    agentId: old.agentId || null,
+    group: old.group,
+    cycle: old.cycle,
+    cycleOrder: old.cycleOrder || [],
+    roundPointer: old.roundPointer || 0,
+    cycleSnapshot: old.cycleSnapshot || null,
+    members: old.members || [],
+    payouts: old.payouts || []
+  };
+  const m = old.meta && typeof old.meta === "object" ? old.meta : {};
+  return {
+    version: APP_VERSION,
+    activeGroupId: id,
+    groups: { [id]: g },
+    groupOrder: [id],
+    agents: {},
+    master: { pin: null },
+    meta: {
+      lastSaved: m.lastSaved || null,
+      createdAt: m.createdAt || new Date().toISOString(),
+      revision: Number.isInteger(m.revision) && m.revision >= 0 ? m.revision : 0,
+      autoSaveFile: m.autoSaveFile === true
+    }
+  };
+}
+
+function migrateV7(legacy) {
+  if (!legacy || typeof legacy !== "object") return null;
+  if (!legacy.group || !Array.isArray(legacy.members)) return null;
+  const s = blankGroup();
+  s.group.name = legacy.group.name || s.group.name;
+  s.group.amount = Math.max(1, parseInt(legacy.group.amount, 10) || 1000);
+  s.group.paybill = legacy.group.paybill || "";
+  s.group.feePercent = 0;
+  s.group.currencyManual = (typeof legacy.group.currency === "string" && VALID_CURRENCIES.has(legacy.group.currency.toUpperCase()))
+    ? legacy.group.currency.toUpperCase() : "";
+  s.group.currency = s.group.currencyManual || s.group.currency;
+  s.cycle = Math.max(1, parseInt(legacy.cycle, 10) || 1);
+  s.members = (legacy.members || []).map((m, i) => ({
+    id: (typeof m.id === "string" && ID_RE.test(m.id)) ? m.id : "m" + Math.random().toString(36).slice(2, 9),
+    name: String(m.name || "").trim().slice(0, 60),
+    phone: typeof m.phone === "string" ? m.phone.slice(0, 24) : "",
+    position: i + 1,
+    paid: Array.isArray(m.paid) ? m.paid.map(Number).filter(n => Number.isInteger(n) && n >= 1) : [],
+    exemptCycle: Number.isInteger(m.exemptCycle) && m.exemptCycle >= 0 ? m.exemptCycle : 0
+  }));
+  s.payouts = (legacy.payouts || []).map(p => {
+    const mid = (typeof p.memberId === "string" && ID_RE.test(p.memberId))
+      ? p.memberId
+      : (s.members.find(m => m.name === (p.name || p.memberName)) || {}).id || "";
+    const memberName = p.memberName || p.name || (s.members.find(m => m.id === mid) || {}).name || "";
+    const amount = Math.max(0, parseInt(p.amount, 10) || 0);
+    return {
+      cycle: parseInt(p.cycle, 10) || 0, memberId: mid, memberName,
+      gross: amount, managementFee: 0, feePercent: 0,
+      amount,
+      date: typeof p.date === "string" ? p.date : ""
+    };
+  });
+  const nonExempt = s.members.filter(m => m.exemptCycle !== s.cycle);
+  if (nonExempt.length) s.cycleSnapshot = { amount: s.group.amount, count: nonExempt.length, feePercent: 0 };
+  s.cycleOrder = s.members.slice().sort((a, b) => a.position - b.position).map(m => m.id);
+  s.roundPointer = 0;
+  return s;
+}
+
+async function loadState() {
+  isLoading = true;
+  let raw = null;
+  try { raw = await Storage.get(KEY); } catch (e) { raw = null; }
+
+  if (!raw) {
+    try {
+      const v8 = await Storage.get(LEGACY_KEY_V8);
+      if (v8 && v8.group) {
+        raw = migrateToV9(v8);
+        await Storage.set(KEY, raw);
+      }
+    } catch (e) {}
+  }
+  if (!raw) {
+    try {
+      const v7 = await Storage.get(LEGACY_KEY_V7);
+      if (v7) {
+        const interim = migrateV7(v7);
+        if (interim) {
+          raw = migrateToV9(interim);
+          await Storage.set(KEY, raw);
+        }
+      }
+    } catch (e) {}
+  }
+
+  app = raw ? validateApp(raw) : blankApp();
+  state = app.groups[app.activeGroupId];
+  formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+  isLoading = false;
+}
+
+function save() {
+  if (isLoading || !app) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flushSave, 150);
+}
+
+async function flushSave() {
+  saveTimer = null;
+  if (!app) return;
+  app.meta.revision = (app.meta.revision || 0) + 1;
+  app.meta.lastSaved = new Date().toISOString();
+  try {
+    await Storage.set(KEY, app);
+    if (channel) channel.postMessage({ type: "saved", revision: app.meta.revision });
+  } catch (e) {
+    console.warn("Save failed:", e);
+    toast("Save failed — export backup now");
+  }
+  if (fileHandle) await writeToFile();
+  updateStatusUI();
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && saveTimer) {
+    clearTimeout(saveTimer);
+    flushSave();
+  }
+});
+window.addEventListener("beforeunload", () => {
+  if (saveTimer && app) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+    app.meta.revision = (app.meta.revision || 0) + 1;
+    app.meta.lastSaved = new Date().toISOString();
+    Storage.setSync(KEY, app);
+  }
+});
+
+if (channel) {
+  channel.onmessage = async (e) => {
+    if (!e.data || e.data.type !== "saved") return;
+    if (saveTimer) return;
+    const localRev = (app && app.meta && app.meta.revision) || 0;
+    const incomingRev = Number(e.data.revision) || 0;
+    if (incomingRev <= localRev) return;
+    const myGroupId = app ? app.activeGroupId : null;
+    await loadState();
+    if (myGroupId && app.groups[myGroupId]) {
+      app.activeGroupId = myGroupId;
+      state = app.groups[myGroupId];
+      formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+    }
+    ensureCycleOrder();
+    render();
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   5b. FILE SYSTEM ACCESS
+   ═══════════════════════════════════════════════════════════════════ */
+async function pickSaveFile() {
+  if (!window.showSaveFilePicker) { toast("File picker not supported in this browser"); return; }
+  try {
+    fileHandle = await window.showSaveFilePicker({
+      suggestedName: `susu-${isoDate()}.json`,
+      types: [{ description: "Susu backup", accept: { "application/json": [".json"] } }]
+    });
+    app.meta.autoSaveFile = true;
+    await writeToFile();
+    save();
+    toast("Auto-save to file enabled");
+  } catch (e) {
+    if (e.name !== "AbortError") toast("Could not open file");
+  }
+}
+
+async function writeToFile() {
+  if (!fileHandle) return false;
+  try {
+    const w = await fileHandle.createWritable();
+    await w.write(JSON.stringify({
+      app: "susu", version: APP_VERSION,
+      exported: new Date().toISOString(),
+      data: app
+    }, null, 2));
+    await w.close();
+    return true;
+  } catch (e) {
+    console.warn("File write failed:", e);
+    fileHandle = null;
+    toast("File write failed — re-enable auto-save");
+    return false;
+  }
+}
+
+function disableAutoSaveFile() {
+  fileHandle = null;
+  app.meta.autoSaveFile = false;
+  save();
+  toast("Auto-save to file disabled");
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. DERIVED
+   ═══════════════════════════════════════════════════════════════════ */
+const money = n => formatter.format(Math.round(Number(n) || 0));
+const symbol = () => getCurrencySymbol(LOCALE, state?.group?.currency || ZONE.currency);
+const members = () => state.members.slice().sort((a,b) => a.position - b.position);
+const currentAmount = () => (state.cycleSnapshot && state.cycleSnapshot.amount) || state.group.amount;
+const isPaid = (m, c) => m && Array.isArray(m.paid) && m.paid.includes(Number(c));
+const isExempt = m => m && m.exemptCycle === state.cycle;
+const needsToPay = m => !isPaid(m, state.cycle) && !isExempt(m);
+const cycleEnd = c => addDays(state.group.startDate, CYCLE_DAYS[state.group.frequency] * c - 1);
+
+const feePercent = () => {
+  if (state.cycleSnapshot && state.cycleSnapshot.feePercent != null) {
+    return state.cycleSnapshot.feePercent;
+  }
+  return state.group.feePercent != null ? state.group.feePercent : 0;
+};
+
+const grossPayoutAmt = () => {
+  if (state.cycleSnapshot) return state.cycleSnapshot.amount * state.cycleSnapshot.count;
+  const nonExempt = members().filter(m => !isExempt(m));
+  return state.group.amount * nonExempt.length;
+};
+
+const payoutAmt = () => {
+  const gross = grossPayoutAmt();
+  const fee = Math.round(gross * feePercent() / 100);
+  return gross - fee;
+};
+
+const pool = () => {
+  const amt = currentAmount();
+  const defaultPct = feePercent();
+  const cyclePct = {};
+  for (const p of state.payouts) cyclePct[p.cycle] = p.feePercent != null ? p.feePercent : 0;
+  if (state.cycleSnapshot) {
+    cyclePct[state.cycle] = state.cycleSnapshot.feePercent != null
+      ? state.cycleSnapshot.feePercent : defaultPct;
+  } else if (cyclePct[state.cycle] == null) {
+    cyclePct[state.cycle] = defaultPct;
+  }
+  let balance = 0;
+  for (const m of state.members) {
+    for (const c of m.paid) {
+      const pct = cyclePct[c] != null ? cyclePct[c] : defaultPct;
+      balance += amt * (1 - pct / 100);
+    }
+  }
+  for (const p of state.payouts) balance -= (+p.amount || 0);
+  return Math.round(balance);
+};
+
+function groupFeeStats(g) {
+  let settledFees = 0;
+  for (const p of g.payouts) settledFees += (p.managementFee || 0);
+  let pendingFees = 0;
+  const snap = g.cycleSnapshot;
+  if (snap) {
+    const pct = snap.feePercent != null ? snap.feePercent : (g.group.feePercent || 0);
+    const paidThisCycle = g.members.filter(m => m.paid.includes(g.cycle)).length;
+    const pendingGross = paidThisCycle * snap.amount;
+    pendingFees = Math.round(pendingGross * pct / 100);
+  }
+  return { settledFees, pendingFees, totalFees: settledFees + pendingFees };
+}
+
+function masterStats() {
+  let totalFees = 0, settled = 0, pending = 0;
+  const byAgent = { "": { id: "", name: "Unassigned", circles: 0, members: 0, fees: 0 } };
+  const byCircle = [];
+  for (const gid of app.groupOrder) {
+    const g = app.groups[gid];
+    if (!g) continue;
+    const stats = groupFeeStats(g);
+    totalFees += stats.totalFees;
+    settled += stats.settledFees;
+    pending += stats.pendingFees;
+    const aid = g.agentId || "";
+    const agentName = (aid && app.agents[aid]) ? app.agents[aid].name : "Unassigned";
+    if (!byAgent[aid]) byAgent[aid] = { id: aid, name: agentName, circles: 0, members: 0, fees: 0 };
+    byAgent[aid].circles++;
+    byAgent[aid].members += g.members.length;
+    byAgent[aid].fees += stats.totalFees;
+    byCircle.push({
+      id: gid, name: g.group.name, agentId: aid, agentName,
+      members: g.members.length, fees: stats.totalFees,
+      settled: stats.settledFees, pending: stats.pendingFees
+    });
+  }
+  return { totalFees, settled, pending, byAgent, byCircle };
+}
+
+function ensureCycleOrder() {
+  if (!Array.isArray(state.cycleOrder)) state.cycleOrder = [];
+  const memberIds = new Set(state.members.map(m => m.id));
+  state.cycleOrder = state.cycleOrder.filter(id => memberIds.has(id));
+  if (state.cycleOrder.length === 0 && state.members.length > 0) {
+    state.cycleOrder = members().map(m => m.id);
+    state.roundPointer = 0;
+  }
+  if (typeof state.roundPointer !== "number" || state.roundPointer < 0) state.roundPointer = 0;
+  if (state.roundPointer >= state.cycleOrder.length && state.cycleOrder.length > 0) {
+    state.cycleOrder = members().map(m => m.id);
+    state.roundPointer = 0;
+  }
+}
+
+function nextPerson() {
+  ensureCycleOrder();
+  if (state.cycleOrder.length === 0) return null;
+  for (let i = state.roundPointer; i < state.cycleOrder.length; i++) {
+    const m = state.members.find(x => x.id === state.cycleOrder[i]);
+    if (m) return m;
+  }
+  return state.members[0] || null;
+}
+
+function estimatePayoutCycle(memberId) {
+  const order = state.cycleOrder || [];
+  const pointer = state.roundPointer || 0;
+  const idx = order.indexOf(memberId);
+  if (idx < 0) {
+    const sorted = members();
+    const pos = sorted.findIndex(x => x.id === memberId);
+    if (pos < 0) return null;
+    return state.cycle + (order.length - pointer) + pos;
+  }
+  if (idx >= pointer) return state.cycle + (idx - pointer);
+  return state.cycle + (order.length - pointer) + idx;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. TOAST + STATUS
+   ═══════════════════════════════════════════════════════════════════ */
+function toast(msg, action, duration) {
+  const el = document.getElementById("toast");
+  el.innerHTML = "";
+  const span = document.createElement("span");
+  span.textContent = msg;
+  el.appendChild(span);
+  if (action) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toast-btn";
+    btn.textContent = action.label;
+    btn.onclick = (ev) => {
+      ev.stopPropagation();
+      try { action.onClick(); } catch (e) { console.error(e); }
+      el.classList.remove("show");
+    };
+    el.appendChild(btn);
+  }
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"),
+    duration || (action ? 5000 : 2400));
+}
+
+function updateStatusUI() {
+  const mode = Storage.getMode();
+  const dot = document.getElementById("netDot");
+  if (dot) {
+    if (mode === "memory") {
+      dot.className = "net-dot memory";
+      dot.title = "Storage unavailable — data won't persist";
+    } else if (!navigator.onLine) {
+      dot.className = "net-dot offline";
+      dot.title = "Offline — app still works";
+    } else {
+      dot.className = "net-dot";
+      dot.title = "Online · " + (mode === "indexeddb" ? "IndexedDB" : "LocalStorage");
+    }
+  }
+  const warn = document.getElementById("memoryWarning");
+  if (warn) warn.hidden = (mode !== "memory");
+}
+
+window.addEventListener("online", updateStatusUI);
+window.addEventListener("offline", updateStatusUI);
+
+/* ═══════════════════════════════════════════════════════════════════
+   8. WHATSAPP
+   ═══════════════════════════════════════════════════════════════════ */
+function openWhatsApp(member, kind, cycleOverride, opts) {
+  opts = opts || {};
+  if (!member || !member.phone) { toast("No WhatsApp number"); return false; }
+  const to = digits(member.phone);
+  if (!to) { toast("Invalid number"); return false; }
+  const text = buildText(member, kind, cycleOverride);
+  const url = `https://wa.me/${to}?text=${encodeURIComponent(text)}`;
+  let w = null;
+  try {
+    w = window.open(url, "_blank");
+    if (w) { try { w.opener = null; } catch (e) {} }
+  } catch (e) {}
+  if (!w) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        () => toast("Popup blocked — message copied"),
+        () => toast("Popup blocked — allow popups to send")
+      );
+    } else { toast("Popup blocked — allow popups"); }
+    return false;
+  }
+  if (!opts.silent) toast("Opening WhatsApp…");
+  return true;
+}
+
+function buildText(m, kind, cycleOverride) {
+  const g = state.group;
+  const c = (cycleOverride != null) ? cycleOverride : state.cycle;
+  const first = m.name.split(" ")[0];
+  const amt = money(currentAmount());
+  const pct = feePercent();
+  const grossAmt = currentAmount();
+  const feeAmt = Math.round(grossAmt * pct / 100);
+  const netAmt = grossAmt - feeAmt;
+  const acct = digits(m.phone).slice(-9);
+  const cycleDue = fmtDate(cycleEnd(c));
+
+  if (kind === "receipt") {
+    const payDate = fmtDate(isoDate());
+    const estCycle = estimatePayoutCycle(m.id);
+    const estDate = estCycle ? fmtDate(cycleEnd(estCycle)) : "TBD";
+    const lines = [
+      `Hi ${first}, payment received ✅`, ``,
+      `💰 Amount: ${amt}`, `🔄 Cycle: ${c}`, `📅 Paid: ${payDate}`, `⏰ Cycle ends: ${cycleDue}`
+    ];
+    if (pct > 0) {
+      lines.push(``, `Breakdown:`);
+      lines.push(`• To pool: ${money(netAmt)}`);
+      lines.push(`• Management fee (${pct}%): ${money(feeAmt)}`);
+    }
+    if (g.paybill) lines.push(`💳 Paid to: ${g.paybill}`);
+    lines.push(``, `🎯 Your payout: Cycle ${estCycle || "?"} · ${estDate}` + (pct > 0 ? " (net of fees)" : ""));
+    lines.push(``, `Thank you!`, `— ${g.name}`);
+    return lines.join("\n");
+  }
+  if (kind === "remind") {
+    return `Hi ${first}, this is a friendly reminder from ${g.name}.\n\n` +
+      `Your ${amt} for Cycle ${c} is still pending.\n\n` +
+      (g.paybill ? `Pay to ${g.paybill}\nAccount: ${acct}\n\n` : "") +
+      `Due: ${cycleDue}\n\nThank you!`;
+  }
+  if (kind === "payout") {
+    const payoutDate = fmtDate(isoDate());
+    const lines = [`🎉 Hi ${first}, you're the recipient for Cycle ${c} of ${g.name}!`, ``];
+    if (pct > 0) {
+      lines.push(`💰 Gross: ${money(grossPayoutAmt())}`);
+      lines.push(`💼 Management fee (${pct}%): ${money(Math.round(grossPayoutAmt() * pct / 100))}`);
+      lines.push(`✅ Net payout: ${money(payoutAmt())}`);
+    } else {
+      lines.push(`💰 Payout: ${money(payoutAmt())}`);
+    }
+    lines.push(`📅 Date: ${payoutDate}`);
+    lines.push(``, `We'll send it shortly.`, `— ${g.name}`);
+    return lines.join("\n");
+  }
+  if (kind === "welcome") {
+    const estCycle = estimatePayoutCycle(m.id);
+    const estDate = estCycle ? fmtDate(cycleEnd(estCycle)) : "TBD";
+    return `Welcome ${first}! 👋\n\nYou've joined ${g.name}.\n\n` +
+      `• Contribution: ${amt} ${g.frequency.toLowerCase()}\n` +
+      (pct > 0 ? `• Management fee: ${pct}%\n` : "") +
+      `• Turn: #${m.position}\n` +
+      `• Estimated payout: Cycle ${estCycle || "?"} · ${estDate}\n\nGlad to have you!`;
+  }
+  return "";
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   9. BACKUP / RESTORE
+   ═══════════════════════════════════════════════════════════════════ */
+function exportBackup() {
+  try {
+    const payload = {
+      app: "susu", version: APP_VERSION,
+      exported: new Date().toISOString(),
+      data: app
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `susu-backup-${isoDate()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast("Backup downloaded");
+  } catch (e) { toast("Export failed"); }
+}
+
+function triggerImport() { document.getElementById("importFile").click(); }
+
+function normalizeImport(payload) {
+  if (!payload || typeof payload !== "object") throw new Error("bad");
+  if (payload.data && payload.data.groups && typeof payload.data.groups === "object") {
+    return validateApp(payload.data);
+  }
+  if (payload.groups && typeof payload.groups === "object") {
+    return validateApp(payload);
+  }
+  if (payload.state && payload.state.group) {
+    return migrateToV9(payload.state);
+  }
+  if (payload.group && Array.isArray(payload.members)) {
+    return migrateToV9(payload);
+  }
+  throw new Error("Unrecognized format");
+}
+
+async function handleImport(file) {
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const payload = JSON.parse(text);
+    const newApp = normalizeImport(payload);
+    const exportedAt = payload.exported ? ` from ${fmtDateTime(payload.exported)}` : "";
+    if (!confirm(`Replace all current data with this backup${exportedAt}?`)) return;
+    app = newApp;
+    state = app.groups[app.activeGroupId];
+    formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+    // Verify session still valid after import
+    if (session) {
+      if (session.role === 'agent' && !app.agents[session.agentId]) clearSession();
+      if (session.role === 'master' && !app.master.pin) clearSession();
+    }
+    ensureCycleOrder();
+    save(); render();
+    toast("Restored from backup");
+  } catch (e) {
+    toast("Invalid backup file");
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   10. AUTH ACTIONS
+   ═══════════════════════════════════════════════════════════════════ */
+function setupMaster() {
+  const pin1 = (document.getElementById('setupPin1').value || '').trim();
+  const pin2 = (document.getElementById('setupPin2').value || '').trim();
+  if (!pin1 || pin1.length < 4) { toast("PIN must be at least 4 characters"); return; }
+  if (pin1 !== pin2) { toast("PINs don't match"); return; }
+  app.master.pin = simpleHash(pin1);
+  setSession({ role: 'master' });
+  save(); render();
+  toast("Master account created");
+}
+
+function loginMaster() {
+  const pin = (document.getElementById('masterLoginPin').value || '').trim();
+  if (!pin) { toast("Enter PIN"); return; }
+  if (simpleHash(pin) !== app.master.pin) { toast("Incorrect PIN"); return; }
+  setSession({ role: 'master' });
+  render();
+  toast("Signed in as master");
+}
+
+function loginAgentByPin() {
+  const aid = document.getElementById('agentLoginSelect').value;
+  const pin = (document.getElementById('agentLoginPin').value || '').trim();
+  const a = app.agents[aid];
+  if (!a) { toast("Select an agent"); return; }
+  if (!pin) { toast("Enter PIN"); return; }
+  if (!a.pin || simpleHash(pin) !== a.pin) { toast("Incorrect PIN"); return; }
+  setSession({ role: 'agent', agentId: aid });
+  ensureActiveGroupVisible();
+  render();
+  toast(`Signed in as ${a.name.split(' ')[0]}`);
+}
+
+function loginAgentByLink() {
+  const input = (document.getElementById('agentLinkInput').value || '').trim();
+  if (!input) { toast("Paste your link"); return; }
+  let hashStr = '';
+  try {
+    const url = new URL(input);
+    hashStr = url.hash || '';
+  } catch (e) {
+    hashStr = input.startsWith('#') ? input : ('#' + input);
+  }
+  const parsed = parseAgentHash(hashStr);
+  if (!parsed) { toast("Invalid link"); return; }
+  const a = app.agents[parsed.agentId];
+  if (!a) { toast("Agent not found in this account"); return; }
+  if (a.token !== parsed.token) { toast("Invalid or expired link"); return; }
+  setSession({ role: 'agent', agentId: parsed.agentId });
+  ensureActiveGroupVisible();
+  render();
+  toast(`Signed in as ${a.name.split(' ')[0]}`);
+}
+
+function signOut() {
+  clearSession();
+  view = 'home';
+  render();
+  toast("Signed out");
+}
+
+function resetAppData() {
+  if (!confirm("Erase all data and start over? This cannot be undone.")) return;
+  if (!confirm("Really erase everything? Master PIN, agents, circles, members, payouts — all gone.")) return;
+  clearSession();
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+  try { localStorage.removeItem(LEGACY_KEY_V8); } catch (e) {}
+  try { localStorage.removeItem(LEGACY_KEY_V7); } catch (e) {}
+  app = blankApp();
+  state = app.groups[app.activeGroupId];
+  formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+  render();
+  toast("Reset complete");
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   11. MEMBER / CYCLE ACTIONS
+   ═══════════════════════════════════════════════════════════════════ */
+function togglePaid(id) {
+  const m = state.members.find(x => x.id === id);
+  if (!m) return;
+  const c = state.cycle;
+  const wasPaid = m.paid.includes(c);
+
+  if (wasPaid) {
+    m.paid = m.paid.filter(x => x !== c);
+    const anyonePaid = state.members.some(x => x.paid.includes(c));
+    if (!anyonePaid) state.cycleSnapshot = null;
+    save(); render();
+    toast("Marked unpaid");
+    return;
+  }
+
+  if (!state.cycleSnapshot) {
+    const nonExempt = state.members.filter(x => x.exemptCycle !== c);
+    state.cycleSnapshot = {
+      amount: state.group.amount,
+      count: nonExempt.length,
+      feePercent: state.group.feePercent != null ? state.group.feePercent : 0
+    };
+  }
+  m.paid.push(c);
+  m.paid.sort((a,b) => a-b);
+  save(); render();
+
+  const first = m.name.split(" ")[0];
+  if (m.phone && state.group.autoReceipt) {
+    toast(`${first} marked paid · opening receipt…`);
+    openWhatsApp(m, "receipt", undefined, { silent: true });
+  } else if (m.phone) {
+    toast(`${first} marked paid`, {
+      label: "Send receipt",
+      onClick: () => openWhatsApp(m, "receipt")
+    });
+  } else {
+    toast(`${first} marked paid`);
+  }
+}
+
+function bulkMarkPaid() {
+  const payers = members().filter(m => needsToPay(m));
+  if (!payers.length) { toast("Everyone's already paid"); return; }
+  if (!confirm(`Mark all ${payers.length} unpaid members as paid for cycle ${state.cycle}?`)) return;
+
+  if (!state.cycleSnapshot) {
+    const nonExempt = state.members.filter(x => x.exemptCycle !== state.cycle);
+    state.cycleSnapshot = {
+      amount: state.group.amount,
+      count: nonExempt.length,
+      feePercent: state.group.feePercent != null ? state.group.feePercent : 0
+    };
+  }
+  payers.forEach(m => {
+    if (!m.paid.includes(state.cycle)) {
+      m.paid.push(state.cycle);
+      m.paid.sort((a, b) => a - b);
+    }
+  });
+  save(); render();
+
+  const withPhone = payers.filter(m => m.phone);
+  if (!withPhone.length) { toast(`${payers.length} marked paid`); return; }
+
+  const paidCount = payers.length;
+  const runChain = (autoStart) => {
+    const queue = withPhone.slice();
+    const total = queue.length;
+    function next() {
+      if (!queue.length) { toast("All receipts sent"); return; }
+      const m = queue.shift();
+      const sent = total - queue.length;
+      const ok = openWhatsApp(m, "receipt", undefined, { silent: true });
+      const blocked = ok ? "" : " (blocked)";
+      const first = autoStart && sent === 1;
+      if (queue.length > 0) {
+        const msg = first
+          ? `${paidCount} marked paid · receipt 1 of ${total}${blocked}`
+          : `Receipt ${sent} of ${total}${blocked}`;
+        toast(msg, { label: "Next receipt", onClick: next }, 20000);
+      } else if (first) {
+        toast(ok ? `${paidCount} marked paid · receipt sent` : `${paidCount} marked paid · receipt blocked`);
+      } else {
+        toast(ok ? `All ${total} receipts sent` : `Last receipt blocked`);
+      }
+    }
+    next();
+  };
+
+  if (state.group.autoReceipt) runChain(true);
+  else {
+    toast(`${payers.length} marked paid`, {
+      label: `Send ${withPhone.length} receipt${withPhone.length > 1 ? "s" : ""}`,
+      onClick: () => runChain(false)
+    }, 12000);
+  }
+}
+
+function closeCycle() {
+  const list = members();
+  if (!list.length) { toast("Add members first"); return; }
+  const unpaid = list.filter(m => needsToPay(m));
+  if (unpaid.length) { toast(`${unpaid.length} still unpaid`); return; }
+  const next = nextPerson();
+  if (!next) { toast("No one to pay"); return; }
+
+  const closedCycle = state.cycle;
+  const gross = grossPayoutAmt();
+  const pct = feePercent();
+  const fee = Math.round(gross * pct / 100);
+  const net = gross - fee;
+
+  if (!confirm(`Give ${next.name} ${money(net)} and start Cycle ${closedCycle + 1}?` +
+    (pct > 0 ? `\n\nManagement fee: ${money(fee)} (${pct}%)` : ""))) return;
+
+  state.payouts.push({
+    cycle: closedCycle, memberId: next.id, memberName: next.name,
+    gross, managementFee: fee, feePercent: pct,
+    amount: net, date: isoDate()
+  });
+
+  state.roundPointer = (state.roundPointer || 0) + 1;
+  if (state.roundPointer >= state.cycleOrder.length) {
+    state.roundPointer = 0;
+    state.cycleOrder = members().map(m => m.id);
+  }
+  state.cycleSnapshot = null;
+  state.cycle = closedCycle + 1;
+
+  save(); render();
+  toast(`${next.name.split(" ")[0]} paid · Cycle ${state.cycle} started`);
+
+  if (next.phone && confirm(`Send WhatsApp payout notice to ${next.name.split(" ")[0]}?`)) {
+    openWhatsApp(next, "payout", closedCycle);
+  }
+}
+
+function openMember(id) {
+  editingId = id || null;
+  const m = id ? state.members.find(x => x.id === id) : null;
+  document.getElementById("dlgTitle").textContent = m ? "Edit member" : "Add member";
+  document.getElementById("dlgSub").textContent = m ? "Update their details." : "Everyone gets a turn to receive.";
+  document.getElementById("fName").value = m ? m.name : "";
+  document.getElementById("fPhone").value = m ? m.phone : "";
+  const dlg = document.getElementById("memberDialog");
+  if (!dlg.open) dlg.showModal();
+  setTimeout(() => document.getElementById("fName").focus(), 40);
+}
+
+function saveMember(e) {
+  e.preventDefault();
+  const name = document.getElementById("fName").value.trim();
+  const phoneRaw = document.getElementById("fPhone").value.trim();
+  if (!name) { toast("Enter a name"); return; }
+  const phone = normalizePhone(phoneRaw, state.group.dial);
+  let newMember = null;
+
+  if (editingId) {
+    const m = state.members.find(x => x.id === editingId);
+    if (m) { m.name = name; m.phone = phone; }
+    toast("Saved");
+  } else {
+    const pos = state.members.reduce((mx, x) => Math.max(mx, x.position || 0), 0) + 1;
+    const exempt = state.cycleSnapshot ? state.cycle : 0;
+    newMember = {
+      id: "m" + Math.random().toString(36).slice(2, 9),
+      name, phone, position: pos, paid: [], exemptCycle: exempt
+    };
+    state.members.push(newMember);
+    ensureCycleOrder();
+    if (!state.cycleSnapshot && !state.cycleOrder.includes(newMember.id)) {
+      state.cycleOrder.push(newMember.id);
+    }
+    toast(exempt ? `${name.split(" ")[0]} added · pays from cycle ${state.cycle + 1}` : `${name.split(" ")[0]} added`);
+  }
+
+  const dlg = document.getElementById("memberDialog");
+  if (dlg.open) dlg.close();
+  editingId = null;
+  save(); render();
+  if (newMember && phone && confirm(`Send a WhatsApp welcome to ${name.split(" ")[0]}?`)) {
+    openWhatsApp(newMember, "welcome");
+  }
+}
+
+function removeMember(id) {
+  const m = state.members.find(x => x.id === id);
+  if (!m) return;
+  if (!confirm(`Remove ${m.name}?`)) return;
+  const idx = state.cycleOrder.indexOf(id);
+  if (idx >= 0 && idx < state.roundPointer) state.roundPointer = Math.max(0, state.roundPointer - 1);
+  state.cycleOrder = state.cycleOrder.filter(x => x !== id);
+  state.members = state.members.filter(x => x.id !== id);
+  state.members.sort((a, b) => a.position - b.position).forEach((x, i) => x.position = i + 1);
+  if (state.cycleSnapshot) {
+    state.cycleSnapshot.count = state.members.filter(x => x.exemptCycle !== state.cycle).length;
+    if (state.cycleSnapshot.count === 0) state.cycleSnapshot = null;
+  }
+  ensureCycleOrder();
+  save(); render();
+  toast("Removed");
+}
+
+function moveMember(id, dir) {
+  if (state.cycleSnapshot) { toast("Can't reorder mid-cycle"); return; }
+  const sorted = members();
+  const i = sorted.findIndex(x => x.id === id);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= sorted.length) return;
+  const tmp = sorted[i].position;
+  sorted[i].position = sorted[j].position;
+  sorted[j].position = tmp;
+  state.cycleOrder = members().map(m => m.id);
+  state.roundPointer = 0;
+  save(); render();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   12. SETTINGS ACTIONS
+   ═══════════════════════════════════════════════════════════════════ */
+function saveSettings() {
+  const g = state.group;
+  const wasFrozen = !!state.cycleSnapshot;
+  const oldAmount = g.amount;
+  const oldFee = g.feePercent;
+
+  g.name = document.getElementById("sName").value.trim() || "Susu Circle";
+  g.amount = Math.max(1, parseInt(document.getElementById("sAmount").value, 10) || 1);
+  g.frequency = document.getElementById("sFrequency").value;
+  g.paybill = document.getElementById("sPaybill").value.trim();
+
+  const feeInput = document.getElementById("sFeePercent");
+  if (feeInput && isMaster()) {
+    let pct = parseFloat(feeInput.value);
+    if (!Number.isFinite(pct)) pct = DEFAULT_FEE_PERCENT;
+    pct = Math.max(0, Math.min(100, pct));
+    g.feePercent = pct;
+  }
+
+  // Agent assignment only master can change
+  if (isMaster()) {
+    const agentSel = document.getElementById("sAgent");
+    if (agentSel) {
+      const aid = agentSel.value || null;
+      state.agentId = (aid && app.agents[aid]) ? aid : null;
+    }
+  }
+
+  const manualCurrency = document.getElementById("sCurrency").value;
+  if (manualCurrency === "__auto__") {
+    g.currencyManual = "";
+    g.currency = VALID_CURRENCIES.has(ZONE.currency) ? ZONE.currency : "USD";
+  } else if (VALID_CURRENCIES.has(manualCurrency)) {
+    g.currencyManual = manualCurrency;
+    g.currency = manualCurrency;
+  }
+  formatter = makeMoneyFormatter(LOCALE, g.currency);
+  save(); render();
+
+  const changes = [];
+  if (wasFrozen && oldAmount !== g.amount) changes.push(`amount applies cycle ${state.cycle + 1}`);
+  if (wasFrozen && oldFee !== g.feePercent) changes.push(`fee applies cycle ${state.cycle + 1}`);
+  if (changes.length) toast(`Saved · ${changes.join(" · ")}`);
+  else toast("Saved");
+}
+
+function toggleAutoReceipt(btn) {
+  state.group.autoReceipt = !state.group.autoReceipt;
+  if (btn) {
+    btn.classList.toggle("on", state.group.autoReceipt);
+    btn.setAttribute("aria-pressed", String(state.group.autoReceipt));
+  }
+  save();
+  toast(state.group.autoReceipt ? "Auto-receipts on" : "Auto-receipts off");
+}
+
+function reDetect() {
+  state.group.region = ZONE.region;
+  state.group.country = ZONE.country;
+  state.group.dial = ZONE.dial;
+  state.group.currencyManual = "";
+  state.group.currency = VALID_CURRENCIES.has(ZONE.currency) ? ZONE.currency : "USD";
+  formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+  save(); render();
+  toast(`Detected: ${ZONE.country || "unknown"} · ${ZONE.currency}`);
+}
+
+function resetCurrentGroup() {
+  if (!confirm(`Reset "${state.group.name}"? Members and payouts will be erased, settings kept.`)) return;
+  const id = app.activeGroupId;
+  const oldName = state.group.name;
+  const oldAuto = state.group.autoReceipt;
+  const oldFee = state.group.feePercent;
+  const oldAgent = state.agentId;
+  const fresh = blankGroup(id);
+  fresh.group.name = oldName;
+  fresh.group.autoReceipt = oldAuto;
+  fresh.group.feePercent = oldFee;
+  fresh.agentId = oldAgent;
+  app.groups[id] = fresh;
+  state = fresh;
+  formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+  save(); render();
+  toast("Reset");
+}
+
+function loadDemo() {
+  const isPristine = state.members.length === 0 && state.payouts.length === 0
+    && state.group.name === "Susu Circle";
+  if (isPristine) {
+    const seeded = seed(app.activeGroupId);
+    if (isAgent()) seeded.agentId = session.agentId;
+    app.groups[app.activeGroupId] = seeded;
+    state = seeded;
+  } else {
+    const id = "g" + Math.random().toString(36).slice(2, 9);
+    const demo = seed(id);
+    demo.group.name = "Demo Circle";
+    if (isAgent()) demo.agentId = session.agentId;
+    app.groups[id] = demo;
+    app.groupOrder.push(id);
+    app.activeGroupId = id;
+    state = demo;
+  }
+  formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+  ensureCycleOrder();
+  save(); render();
+  toast("Demo data loaded");
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   13. GROUP ACTIONS
+   ═══════════════════════════════════════════════════════════════════ */
+function openGroupPicker() {
+  renderGroupList();
+  const d = document.getElementById("groupDialog");
+  if (!d.open) d.showModal();
+}
+function closeGroupDialog() {
+  const d = document.getElementById("groupDialog");
+  if (d.open) d.close();
+}
+
+function renderGroupList() {
+  const visible = visibleGroupIds();
+  const html = visible.map(gid => {
+    const g = app.groups[gid];
+    if (!g) return "";
+    const isActive = gid === app.activeGroupId;
+    const n = g.members.length;
+    const amt = formatMoneyShort(g.group.amount, g.group.currency);
+    const agent = (!isAgent() && g.agentId) ? app.agents[g.agentId] : null;
+    const meta = `${n} member${n === 1 ? "" : "s"} · ${amt} ${g.group.frequency.toLowerCase()}`;
+    const canDelete = visible.length > 1;
+    return `<div class="group-row${isActive ? " active" : ""}">
+      <button class="group-pick" type="button" data-action="switch-group" data-gid="${esc(gid)}">
+        <div class="group-name">${esc(g.group.name)}${agent ? `<span class="group-agent">${esc(agent.name)}</span>` : ""}</div>
+        <div class="group-meta">${esc(meta)}</div>
+      </button>
+      <span class="group-check">${isActive ? "✓" : ""}</span>
+      <button class="btn ghost sm" type="button" data-action="rename-group" data-gid="${esc(gid)}" title="Rename" aria-label="Rename ${esc(g.group.name)}">✎</button>
+      ${canDelete ? `<button class="btn ghost sm" type="button" data-action="delete-group" data-gid="${esc(gid)}" title="Delete" aria-label="Delete ${esc(g.group.name)}" style="color:var(--red)">✕</button>` : ""}
+    </div>`;
+  }).join("");
+  document.getElementById("groupList").innerHTML = html || '<div class="payout-empty">No circles yet</div>';
+}
+
+function newGroup() {
+  const name = prompt("Name for new circle:", "New Susu");
+  if (!name || !name.trim()) return;
+  const id = "g" + Math.random().toString(36).slice(2, 9);
+  const g = blankGroup(id);
+  g.group.name = name.trim().slice(0, 60);
+  if (isAgent()) g.agentId = session.agentId;
+  app.groups[id] = g;
+  app.groupOrder.push(id);
+  app.activeGroupId = id;
+  state = g;
+  formatter = makeMoneyFormatter(LOCALE, g.group.currency);
+  ensureCycleOrder();
+  save(); render(); closeGroupDialog();
+  toast(`Created ${g.group.name}`);
+}
+
+function renameGroup(gid) {
+  const g = app.groups[gid];
+  if (!g) return;
+  if (isAgent() && g.agentId !== session.agentId) { toast("Not your circle"); return; }
+  const name = prompt("Rename circle:", g.group.name);
+  if (!name || !name.trim()) return;
+  g.group.name = name.trim().slice(0, 60);
+  save();
+  if (gid === app.activeGroupId) render();
+  renderGroupList();
+  toast("Renamed");
+}
+
+function deleteGroup(gid) {
+  const visible = visibleGroupIds();
+  if (visible.length <= 1) { toast("Can't delete the last circle"); return; }
+  const g = app.groups[gid];
+  if (!g) return;
+  if (isAgent() && g.agentId !== session.agentId) { toast("Not your circle"); return; }
+  if (!confirm(`Delete "${g.group.name}"? This can't be undone.`)) return;
+  delete app.groups[gid];
+  app.groupOrder = app.groupOrder.filter(id => id !== gid);
+  if (gid === app.activeGroupId) {
+    app.activeGroupId = visible[0] === gid ? visible[1] : visible[0];
+    state = app.groups[app.activeGroupId];
+    formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+    ensureCycleOrder();
+    render();
+  }
+  save(); renderGroupList();
+  toast("Deleted");
+}
+
+function switchGroup(gid) {
+  if (!app.groups[gid]) { closeGroupDialog(); return; }
+  if (isAgent() && app.groups[gid].agentId !== session.agentId) {
+    toast("Not your circle"); closeGroupDialog(); return;
+  }
+  if (gid === app.activeGroupId) { closeGroupDialog(); return; }
+  if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; flushSave(); }
+  app.activeGroupId = gid;
+  state = app.groups[gid];
+  formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+  editingId = null;
+  ensureCycleOrder();
+  save(); render(); closeGroupDialog();
+  toast(`Switched to ${state.group.name}`);
+}
+
+function formatMoneyShort(amount, currency) {
+  try {
+    return new Intl.NumberFormat(LOCALE, {
+      style: "currency", currency, maximumFractionDigits: 0, currencyDisplay: "narrowSymbol"
+    }).format(amount);
+  } catch (e) { return `${currency} ${Number(amount).toLocaleString()}`; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   14. AGENT ACTIONS (master only)
+   ═══════════════════════════════════════════════════════════════════ */
+function newAgent() {
+  if (!isMaster()) { toast("Master access required"); return; }
+  editingAgentId = null;
+  document.getElementById("agName").value = "";
+  document.getElementById("agPhone").value = "";
+  document.getElementById("agPin").value = "";
+  document.getElementById("agTitle").textContent = "New agent";
+  document.getElementById("agPinHint").textContent = "Set the agent's initial PIN. They can change it after signing in.";
+  document.getElementById("agentDialog").showModal();
+  setTimeout(() => document.getElementById("agName").focus(), 40);
+}
+
+function editAgent(aid) {
+  if (!isMaster()) { toast("Master access required"); return; }
+  const a = app.agents[aid];
+  if (!a) return;
+  editingAgentId = aid;
+  document.getElementById("agName").value = a.name;
+  document.getElementById("agPhone").value = a.phone || "";
+  document.getElementById("agPin").value = "";
+  document.getElementById("agTitle").textContent = "Edit agent";
+  document.getElementById("agPinHint").textContent = "Leave blank to keep current PIN.";
+  document.getElementById("agentDialog").showModal();
+  setTimeout(() => document.getElementById("agName").focus(), 40);
+}
+
+function saveAgent(e) {
+  e.preventDefault();
+  if (!isMaster()) { toast("Master access required"); return; }
+  const name = document.getElementById("agName").value.trim();
+  const phoneRaw = document.getElementById("agPhone").value.trim();
+  const pinRaw = (document.getElementById("agPin").value || "").trim();
+  const phone = normalizePhone(phoneRaw, ZONE.dial);
+  if (!name) { toast("Enter a name"); return; }
+
+  if (editingAgentId) {
+    const a = app.agents[editingAgentId];
+    if (!a) return;
+    a.name = name.slice(0, 60);
+    a.phone = phone;
+    if (pinRaw) {
+      if (pinRaw.length < 4) { toast("PIN must be at least 4 characters"); return; }
+      a.pin = simpleHash(pinRaw);
+    }
+    document.getElementById("agentDialog").close();
+    editingAgentId = null;
+    save(); render();
+    toast("Agent updated");
+    return;
+  }
+
+  if (!pinRaw || pinRaw.length < 4) { toast("PIN must be at least 4 characters"); return; }
+  const aid = "a" + Math.random().toString(36).slice(2, 9);
+  app.agents[aid] = {
+    id: aid,
+    name: name.slice(0, 60),
+    phone,
+    pin: simpleHash(pinRaw),
+    token: genToken(),
+    createdAt: new Date().toISOString()
+  };
+  document.getElementById("agentDialog").close();
+  editingAgentId = null;
+  save(); render();
+  showAgentLinkDialog(aid);
+  toast(`Agent ${name.split(' ')[0]} created`);
+}
+
+function deleteAgent(aid) {
+  if (!isMaster()) { toast("Master access required"); return; }
+  const a = app.agents[aid];
+  if (!a) return;
+  const assigned = app.groupOrder.filter(gid => app.groups[gid].agentId === aid).length;
+  const msg = assigned > 0
+    ? `Delete agent "${a.name}"? ${assigned} circle${assigned > 1 ? "s" : ""} will become unassigned.`
+    : `Delete agent "${a.name}"?`;
+  if (!confirm(msg)) return;
+  delete app.agents[aid];
+  for (const gid of app.groupOrder) {
+    if (app.groups[gid].agentId === aid) app.groups[gid].agentId = null;
+  }
+  save(); render();
+  toast("Agent deleted");
+}
+
+function regenerateAgentToken(aid) {
+  if (!isMaster()) { toast("Master access required"); return; }
+  const a = app.agents[aid];
+  if (!a) return;
+  if (!confirm("Generate a new personal link? The agent's old link will stop working.")) return;
+  a.token = genToken();
+  save(); render();
+  showAgentLinkDialog(aid);
+  toast("New link generated");
+}
+
+function showAgentLinkDialog(aid) {
+  const a = app.agents[aid];
+  if (!a) return;
+  const link = buildAgentLink(aid);
+  const old = document.getElementById('linkDialog');
+  if (old) old.remove();
+  const html = `
+    <dialog id="linkDialog">
+      <div class="dlg-head">
+        <h3>${esc(a.name)} — personal link</h3>
+        <p>Share with the agent so they can sign in</p>
+      </div>
+      <div class="dlg-body">
+        <div class="field">
+          <label>Personal link</label>
+          <textarea id="linkText" readonly rows="3" style="width:100%;font-family:ui-monospace,monospace;font-size:12px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fafbfc;resize:none">${esc(link)}</textarea>
+          <div class="hint">Anyone with this link can sign in as ${esc(a.name)}. Keep it private.</div>
+        </div>
+        <div class="detect-actions" style="margin-top:0">
+          <button type="button" class="btn sm" data-action="copy-agent-link" data-aid="${esc(aid)}">📋 Copy link</button>
+          ${a.phone ? `<button type="button" class="btn sm wa" data-action="send-agent-link" data-aid="${esc(aid)}">💬 WhatsApp</button>` : ''}
+          <button type="button" class="btn sm" data-action="regen-agent-link" data-aid="${esc(aid)}">🔄 New link</button>
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn primary" onclick="this.closest('dialog').close()">Done</button>
+      </div>
+    </dialog>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.getElementById('linkDialog').showModal();
+}
+
+function copyAgentLink(aid) {
+  const link = buildAgentLink(aid);
+  if (!link) { toast("No link"); return; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(
+      () => toast("Link copied"),
+      () => toast("Copy failed — select manually")
+    );
+  } else {
+    toast("Clipboard unavailable — select manually");
+  }
+}
+
+function sendAgentLinkWhatsApp(aid) {
+  const a = app.agents[aid];
+  if (!a || !a.phone) { toast("No phone"); return; }
+  const link = buildAgentLink(aid);
+  const text = `Hi ${a.name.split(' ')[0]} 👋\n\nYour personal Susu login link:\n\n${link}\n\nOpen it to sign in to your circles. Keep it private — don't share.`;
+  const url = `https://wa.me/${digits(a.phone)}?text=${encodeURIComponent(text)}`;
+  window.open(url, "_blank");
+}
+
+function assignAgentToGroup(gid, aid) {
+  if (!isMaster()) { toast("Master access required"); return; }
+  const g = app.groups[gid];
+  if (!g) return;
+  g.agentId = (aid && app.agents[aid]) ? aid : null;
+  save();
+  render();
+  toast(g.agentId ? `Assigned to ${app.agents[g.agentId].name}` : "Unassigned");
+}
+
+function changeMasterPin() {
+  if (!isMaster()) return;
+  const oldPin = (document.getElementById("oldPin").value || "").trim();
+  const newPin = (document.getElementById("newPin").value || "").trim();
+  const confirmPin = (document.getElementById("confirmPin").value || "").trim();
+  if (simpleHash(oldPin) !== app.master.pin) { toast("Current PIN incorrect"); return; }
+  if (!newPin || newPin.length < 4) { toast("New PIN must be at least 4 characters"); return; }
+  if (newPin !== confirmPin) { toast("PINs don't match"); return; }
+  app.master.pin = simpleHash(newPin);
+  save(); render();
+  toast("Master PIN changed");
+}
+
+function changeAgentOwnPin() {
+  if (!isAgent()) return;
+  const a = currentAgent();
+  const oldPin = (document.getElementById("agentOldPin").value || "").trim();
+  const newPin = (document.getElementById("agentNewPin").value || "").trim();
+  const confirmPin = (document.getElementById("agentConfirmPin").value || "").trim();
+  if (!a.pin || simpleHash(oldPin) !== a.pin) { toast("Current PIN incorrect"); return; }
+  if (!newPin || newPin.length < 4) { toast("New PIN must be at least 4 characters"); return; }
+  if (newPin !== confirmPin) { toast("PINs don't match"); return; }
+  a.pin = simpleHash(newPin);
+  save(); render();
+  toast("PIN changed");
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   15. LOGIN RENDER
+   ═══════════════════════════════════════════════════════════════════ */
+function renderLogin() {
+  document.getElementById('loginScreen').hidden = false;
+  document.querySelector('.wrap').style.display = 'none';
+
+  const hasMasterPin = !!app.master.pin;
+  const agents = Object.values(app.agents);
+  const hasAgents = agents.length > 0;
+
+  if (!hasMasterPin) {
+    document.getElementById('loginScreen').innerHTML = `
+      <div class="login-card">
+        <div class="login-logo">◎</div>
+        <h1>Welcome to Susu</h1>
+        <p>Set up your master account to get started. You'll be able to create agents and assign circles after this.</p>
+        <div class="field">
+          <label>Master PIN</label>
+          <input id="setupPin1" type="password" inputmode="numeric" maxlength="12" placeholder="4+ characters">
+        </div>
+        <div class="field">
+          <label>Confirm PIN</label>
+          <input id="setupPin2" type="password" inputmode="numeric" maxlength="12" placeholder="Confirm">
+        </div>
+        <button class="btn purple block" data-action="setup-master">Create master account</button>
+        <p class="login-hint">PIN is stored locally on this device. It's not sent anywhere.</p>
+      </div>
+    `;
+    return;
+  }
+
+  document.getElementById('loginScreen').innerHTML = `
+    <div class="login-card">
+      <div class="login-logo">◎</div>
+      <h1>Susu</h1>
+      <p>Sign in to continue</p>
+      <div class="login-tabs">
+        <button class="login-tab active" data-login-tab="master">👑 Master</button>
+        <button class="login-tab" data-login-tab="agent" ${!hasAgents ? 'disabled' : ''}>👤 Agent</button>
+      </div>
+      <div id="loginMasterPane">
+        <div class="field">
+          <label>Master PIN</label>
+          <input id="masterLoginPin" type="password" inputmode="numeric" maxlength="12" placeholder="Enter PIN" autocomplete="off">
+        </div>
+        <button class="btn primary block" data-action="login-master">Sign in as master</button>
+        <p class="login-hint">Agents don't have access to this view.</p>
+      </div>
+      <div id="loginAgentPane" hidden>
+        <div class="field">
+          <label>Agent</label>
+          <select id="agentLoginSelect">
+            ${agents.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>PIN</label>
+          <input id="agentLoginPin" type="password" inputmode="numeric" maxlength="12" placeholder="Enter PIN" autocomplete="off">
+        </div>
+        <button class="btn purple block" data-action="login-agent-pin">Sign in as agent</button>
+        <p class="login-hint" style="margin-top:16px">Or use your personal link</p>
+        <div class="field">
+          <label>Personal link</label>
+          <input id="agentLinkInput" type="url" placeholder="Paste your link" autocomplete="off">
+        </div>
+        <button class="btn block" data-action="login-agent-link">Open link</button>
+      </div>
+      <p class="login-hint" style="margin-top:20px">Forgot master PIN? <a href="#" data-action="reset-data" style="color:var(--red)">Reset all data</a></p>
+    </div>
+  `;
+}
+
+function hideLogin() {
+  document.getElementById('loginScreen').hidden = true;
+  document.querySelector('.wrap').style.display = '';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   16. MAIN RENDER
+   ═══════════════════════════════════════════════════════════════════ */
+function render() {
+  if (!session) {
+    renderLogin();
+    return;
+  }
+  hideLogin();
+
+  // Master tab visibility
+  const masterTab = document.querySelector('.tab[data-view="master"]');
+  if (masterTab) masterTab.hidden = !isMaster();
+  if (isAgent() && view === 'master') view = 'home';
+
+  if (isAgent()) {
+    ensureActiveGroupVisible();
+    if (visibleGroupIds().length === 0) {
+      renderAgentNoCircles();
+      return;
+    }
+  }
+
+  document.getElementById("groupName").textContent = state.group.name;
+  document.title = state.group.name + " · Susu";
+  const amt = currentAmount();
+  document.getElementById("groupSub").textContent =
+    `${members().length} members · ${money(amt)} ${state.group.frequency.toLowerCase()}`;
+  document.getElementById("cycleNum").textContent = state.cycle;
+
+  const agentLabel = document.getElementById("agentLabel");
+  if (isAgent()) {
+    agentLabel.textContent = currentAgent().name + " (agent)";
+    agentLabel.hidden = false;
+  } else if (isMaster() && state.agentId && app.agents[state.agentId]) {
+    agentLabel.textContent = app.agents[state.agentId].name;
+    agentLabel.hidden = false;
+  } else {
+    agentLabel.hidden = true;
+  }
+
+  renderHome();
+  renderPeople();
+  renderSettings();
+  if (isMaster()) renderMaster();
+  else document.getElementById("view-master").innerHTML = "";
+  setTab(view);
+  updateStatusUI();
+}
+
+function setTab(v) {
+  view = v;
+  document.querySelectorAll(".tab").forEach(t => {
+    if (t.hidden) return;
+    t.classList.toggle("active", t.dataset.view === v);
+  });
+  document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
+  const masterTab = document.querySelector('.tab[data-view="master"]');
+  if (masterTab && isMaster()) {
+    masterTab.classList.toggle("master-tab", view !== "master");
+  }
+}
+
+function renderAgentNoCircles() {
+  document.getElementById("groupName").textContent = "No circles";
+  document.getElementById("groupSub").textContent = "Assigned by master";
+  document.getElementById("cycleNum").textContent = "—";
+  document.getElementById("agentLabel").textContent = currentAgent().name + " (agent)";
+  document.getElementById("agentLabel").hidden = false;
+  const html = `
+    <div class="card">
+      <div class="empty">
+        <span class="emoji">📭</span>
+        <div style="font-weight:600;color:var(--ink);margin-bottom:4px">No circles yet</div>
+        <div>You don't have any circles assigned.</div>
+        <button class="btn primary" data-action="new-group" style="margin-top:16px">Create my first circle</button>
+        <div style="margin-top:16px">
+          <button class="btn ghost sm" data-action="sign-out">Sign out</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById("view-home").innerHTML = html;
+  document.getElementById("view-people").innerHTML = "";
+  document.getElementById("view-settings").innerHTML = "";
+  setTab('home');
+}
+
+function renderHistory() {
+  const payouts = state.payouts || [];
+  if (!payouts.length) {
+    return `<div class="card">
+      <h2 class="card-title">Payout history</h2>
+      <div class="payout-empty">No payouts yet — close your first cycle to see it here.</div>
+    </div>`;
+  }
+  const totalPaidOut = payouts.reduce((s, p) => s + (+p.amount || 0), 0);
+  const totalFees = payouts.reduce((s, p) => s + (+p.managementFee || 0), 0);
+  const sorted = payouts.slice().sort((a, b) => {
+    const dc = (b.cycle || 0) - (a.cycle || 0);
+    if (dc !== 0) return dc;
+    return String(b.date || "").localeCompare(String(a.date || ""));
+  });
+  const rows = sorted.map(p => {
+    const m = state.members.find(x => x.id === p.memberId);
+    const name = (m && m.name) || p.memberName || "Removed member";
+    const isRemoved = !m;
+    const date = p.date ? fmtDate(p.date) : "—";
+    const colorSeed = p.memberId || name;
+    const cycleLabel = p.cycle ? `Cycle ${p.cycle}` : "Payout";
+    const feeNote = p.managementFee > 0
+      ? ` · fee ${money(p.managementFee)} (${p.feePercent}%)`
+      : "";
+    return `<div class="payout-row">
+      <span class="payout-cycle">${esc(cycleLabel)}</span>
+      <div class="payout-who">
+        <div class="avatar${avatarColor(colorSeed)}">${esc(initials(name))}</div>
+        <div class="who-text">
+          <div class="payout-name${isRemoved ? " removed" : ""}">${esc(name)}</div>
+          <div class="payout-date">${esc(date)}${esc(feeNote)}</div>
+        </div>
+      </div>
+      <span class="payout-amt">${money(p.amount)}</span>
+    </div>`;
+  }).join("");
+  return `<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <h2 class="card-title" style="margin:0">Payout history · ${payouts.length}</h2>
+      <span style="font-size:12.5px;color:var(--muted)">Paid out ${money(totalPaidOut)}${totalFees > 0 ? ` · fees ${money(totalFees)}` : ""}</span>
+    </div>
+    <div class="payout-list">${rows}</div>
+  </div>`;
+}
+
+function renderHome() {
+  const list = members();
+  const total = list.length;
+  const payers = list.filter(m => !isExempt(m));
+  const paid = payers.filter(m => isPaid(m, state.cycle)).length;
+  const pct = payers.length ? Math.round(paid / payers.length * 100) : 0;
+  const unpaid = payers.filter(m => !isPaid(m, state.cycle));
+  const next = nextPerson();
+  const allPaid = payers.length > 0 && paid === payers.length;
+  const due = fmtDate(cycleEnd(state.cycle));
+  const feePct = feePercent();
+  const grossAmt = grossPayoutAmt();
+  const feeAmt = Math.round(grossAmt * feePct / 100);
+
+  const btnHtml = total === 0
+    ? `<button class="hero-btn" data-action="add">Add members</button>`
+    : allPaid
+      ? `<button class="hero-btn" data-action="close">Close cycle →</button>`
+      : `<button class="hero-btn" disabled>Waiting · ${paid}/${payers.length}</button>`;
+
+  const unpaidHtml = unpaid.length ? `
+    <div class="card" style="padding-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h2 class="card-title" style="margin:0">Waiting on ${unpaid.length}</h2>
+        <span style="font-size:12.5px;color:var(--muted)">Due ${due}</span>
+      </div>
+      <div class="unpaid-list">
+        ${unpaid.map(m => `
+          <div class="unpaid-row">
+            <div class="avatar${avatarColor(m.id)}">${esc(initials(m.name))}</div>
+            <div class="who">
+              <div class="name">${esc(m.name)}</div>
+              <div class="ph">${m.phone ? esc(m.phone) : "no number"}</div>
+            </div>
+            <div class="actions">
+              ${m.phone ? `<button class="btn wa sm" data-action="wa" data-id="${esc(m.id)}" data-kind="remind" title="Send reminder">💬</button>` : ""}
+              <button class="btn sm" data-action="paid" data-id="${esc(m.id)}">Paid</button>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+      ${unpaid.length > 1 ? `
+        <button class="btn primary block" data-action="bulk-paid" style="margin-top:14px">
+          Mark all ${unpaid.length} paid
+        </button>
+      ` : ""}
+    </div>
+  ` : "";
+
+  const nextHtml = next ? `
+    <div class="card">
+      <h2 class="card-title">Up next</h2>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="avatar${avatarColor(next.id)}" style="width:48px;height:48px;font-size:16px">${esc(initials(next.name))}</div>
+        <div style="flex:1;min-width:140px">
+          <div style="font-weight:600;font-size:16px">${esc(next.name)}</div>
+          <div style="font-size:13px;color:var(--muted)">${next.phone ? esc(next.phone) : "no number"}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:700;letter-spacing:-.02em">${money(payoutAmt())}</div>
+          ${feePct > 0 ? `<div style="font-size:11px;color:var(--muted)">net of ${feePct}% fee (${money(feeAmt)})</div>` : ""}
+        </div>
+      </div>
+    </div>
+  ` : "";
+
+  const paybillHtml = state.group.paybill ? `
+    <div class="pay-footer">
+      <div>
+        <div class="lbl">Pay to</div>
+        <div class="num">${esc(state.group.paybill)}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="lbl">Currency</div>
+        <div class="num" style="font-size:15px">${esc(state.group.currency)} · ${symbol()}</div>
+      </div>
+    </div>
+  ` : "";
+
+  const emptyHtml = !list.length ? `
+    <div class="card">
+      <div class="empty">
+        <span class="emoji">👋</span>
+        <div style="font-weight:600;color:var(--ink);margin-bottom:4px">No members yet</div>
+        <div>Add people to start your circle</div>
+        <button class="btn primary" data-action="add" style="margin-top:16px">Add first member</button>
+        <div style="margin-top:12px;font-size:12.5px;color:var(--muted)">
+          Or <button class="btn ghost sm" data-action="load-demo" style="padding:2px 8px;text-decoration:underline">load demo data</button>
+        </div>
+      </div>
+    </div>
+  ` : "";
+
+  document.getElementById("view-home").innerHTML = `
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="label">Pool balance</div>
+          <div class="value">${money(pool())}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="label">Paid</div>
+          <div class="value">${paid}<small> / ${payers.length}</small></div>
+        </div>
+      </div>
+      <div class="hero-bar"><i style="width:${pct}%"></i></div>
+      <div class="hero-info">
+        <div class="meta">Cycle ${state.cycle} · ${pct}% complete${feePct > 0 ? ` · ${feePct}% fee` : ""}</div>
+        ${btnHtml}
+      </div>
+    </div>
+    ${paybillHtml}
+    ${unpaidHtml}
+    ${nextHtml}
+    ${renderHistory()}
+    ${emptyHtml}
+  `;
+}
+
+function renderPeople() {
+  const list = members();
+  const next = nextPerson();
+  const locked = !!state.cycleSnapshot;
+  document.getElementById("view-people").innerHTML = `
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        margin-bottom:16px;gap:10px;flex-wrap:wrap">
+        <h2 class="card-title" style="margin:0">Members · ${list.length}</h2>
+        <button class="btn primary sm" data-action="add">＋ Add</button>
+      </div>
+      ${locked ? `
+        <div style="background:var(--amber-soft);border:1px solid #fde68a;color:var(--amber);
+          border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:13px;line-height:1.5">
+          Cycle ${state.cycle} is in progress — reordering is locked until the cycle closes.
+        </div>` : ""}
+      ${list.length ? `
+        <div class="people">
+          ${list.map(m => {
+            const paid = isPaid(m, state.cycle);
+            const exempt = isExempt(m);
+            const isNext = next && next.id === m.id && !paid && !exempt;
+            const statusClass = exempt ? "exempt" : (paid ? "paid" : "unpaid");
+            const statusText = exempt ? "Exempt" : (paid ? "✓ Paid" : "○ Unpaid");
+            const estCycle = estimatePayoutCycle(m.id);
+            const metaLine = `${m.phone ? esc(m.phone) : "no number"} · Turn #${m.position}` +
+              (estCycle ? ` · Payout cycle ${estCycle}` : "");
+            const waKind = paid ? "receipt" : "remind";
+            const waLabel = paid ? "Send receipt" : "Send reminder";
+            return `<div class="person">
+              <div class="avatar${avatarColor(m.id)}">${esc(initials(m.name))}</div>
+              <div class="info">
+                <div class="name">${esc(m.name)}</div>
+                <div class="meta">${metaLine}</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+                  <span class="status ${statusClass}">${statusText}</span>
+                  ${isNext ? `<span class="status next">Next</span>` : ""}
+                </div>
+              </div>
+              <div class="person-actions">
+                <button class="toggle ${paid ? "on" : ""}" data-action="paid" data-id="${esc(m.id)}" title="${paid ? "Mark unpaid" : "Mark paid"}"></button>
+                ${m.phone ? `<button class="btn ghost" data-action="wa" data-id="${esc(m.id)}" data-kind="${waKind}" title="${waLabel}" aria-label="${waLabel} for ${esc(m.name)}">💬</button>` : ""}
+                <button class="btn ghost" data-action="up" data-id="${esc(m.id)}" title="Move up" ${locked ? "disabled" : ""}>↑</button>
+                <button class="btn ghost" data-action="down" data-id="${esc(m.id)}" title="Move down" ${locked ? "disabled" : ""}>↓</button>
+                <button class="btn ghost" data-action="edit" data-id="${esc(m.id)}" title="Edit">✎</button>
+                <button class="btn ghost" data-action="remove" data-id="${esc(m.id)}" title="Remove" style="color:var(--red)">✕</button>
+              </div>
+            </div>`;
+          }).join("")}
+        </div>
+      ` : `<div class="empty">
+        <span class="emoji">👥</span>
+        <div style="font-weight:600;color:var(--ink);margin-bottom:4px">No members yet</div>
+        <div>Tap "＋ Add" to invite someone</div>
+      </div>`}
+    </div>
+  `;
+}
+
+function currencyOptions(selectedCode) {
+  return Array.from(VALID_CURRENCIES).sort().map(c => {
+    const isSel = (selectedCode === c) ? "selected" : "";
+    let label = c;
+    try {
+      if (typeof Intl.DisplayNames === "function") {
+        const name = new Intl.DisplayNames([LOCALE], { type: "currency" }).of(c);
+        if (name && name !== c) label = `${c} · ${name}`;
+      }
+    } catch (e) {}
+    return `<option value="${c}" ${isSel}>${esc(label)}</option>`;
+  }).join("");
+}
+
+function storageLabel(mode) {
+  if (mode === "indexeddb") return '<span class="status-chip ok">IndexedDB</span>';
+  if (mode === "localstorage") return '<span class="status-chip ok">LocalStorage</span>';
+  if (mode === "memory") return '<span class="status-chip err">Memory only</span>';
+  return '<span class="status-chip info">Detecting…</span>';
+}
+
+function renderSettings() {
+  const g = state.group;
+  const autoActive = !g.currencyManual;
+  const mode = Storage.getMode();
+  const last = app.meta.lastSaved ? fmtDateTime(app.meta.lastSaved) : "—";
+  const online = navigator.onLine;
+
+  const fsaSupported = typeof window.showSaveFilePicker === "function";
+  const autoSaveOn = !!fileHandle;
+  const wantsAutoSave = !!app.meta.autoSaveFile;
+  const fsaStatus = autoSaveOn
+    ? '<span class="status-chip ok">Connected</span>'
+    : wantsAutoSave
+      ? '<span class="status-chip warn">Disconnected</span>'
+      : '<span class="status-chip info">Off</span>';
+
+  const agentField = isMaster() ? `
+    <div class="field">
+      <label for="sAgent">Assigned agent</label>
+      <select id="sAgent">
+        <option value="">— Unassigned —</option>
+        ${Object.values(app.agents).map(a => `
+          <option value="${esc(a.id)}" ${state.agentId === a.id ? "selected" : ""}>${esc(a.name)}</option>
+        `).join("")}
+      </select>
+      <div class="hint">Agents are managed in the Master tab</div>
+    </div>
+  ` : "";
+
+  const feeField = isMaster() ? `
+    <div class="field-row">
+      <div class="field">
+        <label for="sFeePercent">Management fee (%)</label>
+        <input id="sFeePercent" type="number" min="0" max="100" step="0.5" value="${g.feePercent}" inputmode="decimal">
+        <div class="hint">${g.feePercent > 0 ? `Deducted from payouts · ${g.feePercent}% to master` : "Fees disabled"}</div>
+      </div>
+      <div class="field">
+        <label for="sPaybill">Paybill / Till</label>
+        <input id="sPaybill" value="${esc(g.paybill)}" maxlength="20" placeholder="e.g. 247247">
+        <div class="hint">Members pay into this number</div>
+      </div>
+    </div>
+  ` : `
+    <div class="field">
+      <label for="sPaybill">Paybill / Till</label>
+      <input id="sPaybill" value="${esc(g.paybill)}" maxlength="20" placeholder="e.g. 247247">
+      <div class="hint">Members pay into this number</div>
+    </div>
+  `;
+
+  const agentAccountHtml = isAgent() ? `
+    <div class="card">
+      <h2 class="card-title">My account</h2>
+      <div class="detect-panel">
+        <div class="detect-row"><span class="k">👤 Name</span><span class="v">${esc(currentAgent().name)}</span></div>
+        ${currentAgent().phone ? `<div class="detect-row"><span class="k">📱 Phone</span><span class="v">${esc(currentAgent().phone)}</span></div>` : ""}
+        <div class="detect-row"><span class="k">🪪 Role</span><span class="v"><span class="status-chip purple">Agent</span></span></div>
+      </div>
+      <div class="field">
+        <label>Change my PIN</label>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <input id="agentOldPin" type="password" inputmode="numeric" maxlength="12" placeholder="Current PIN" autocomplete="off">
+          <input id="agentNewPin" type="password" inputmode="numeric" maxlength="12" placeholder="New PIN" autocomplete="off">
+          <input id="agentConfirmPin" type="password" inputmode="numeric" maxlength="12" placeholder="Confirm new PIN" autocomplete="off">
+        </div>
+        <button class="btn sm" data-action="change-agent-pin" style="margin-top:10px">Update PIN</button>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn sm danger" data-action="sign-out">Sign out</button>
+      </div>
+    </div>
+  ` : '';
+
+  document.getElementById("view-settings").innerHTML = `
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        margin-bottom:12px;gap:10px;flex-wrap:wrap">
+        <h2 class="card-title" style="margin:0">Circles</h2>
+        <span style="font-size:12.5px;color:var(--muted)">${visibleGroupIds().length} visible</span>
+      </div>
+      <div class="detect-panel" style="margin-bottom:12px">
+        <div class="detect-row">
+          <span class="k">➡️ Current</span>
+          <span class="v">${esc(state.group.name)}</span>
+        </div>
+      </div>
+      <div class="detect-actions">
+        <button class="btn sm primary" data-action="open-groups">Manage circles</button>
+        <button class="btn sm" data-action="new-group">＋ New circle</button>
+      </div>
+    </div>
+
+    ${agentAccountHtml}
+
+    <div class="card">
+      <h2 class="card-title">Detected from your device</h2>
+      <div class="detect-panel">
+        <div class="detect-row"><span class="k">🌐 Locale</span><span class="v auto">${esc(ZONE.locale)}</span></div>
+        <div class="detect-row"><span class="k">🕐 Timezone</span><span class="v auto">${esc(ZONE.tz)}</span></div>
+        <div class="detect-row"><span class="k">📍 Country</span><span class="v auto">${esc(ZONE.country || ZONE.region || "—")}${ZONE.region ? " (" + esc(ZONE.region) + ")" : ""}</span></div>
+        <div class="detect-row"><span class="k">💵 Currency</span><span class="v auto">${esc(ZONE.currency)} · ${esc(getCurrencySymbol(LOCALE, ZONE.currency))}</span></div>
+        <div class="detect-row"><span class="k">📞 Dial code</span><span class="v auto">${ZONE.dial ? "+" + esc(ZONE.dial) : "—"}</span></div>
+      </div>
+      <div class="detect-actions"><button class="btn sm primary" data-action="re-detect">Re-detect</button></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Group · ${esc(state.group.name)}</h2>
+      <div class="field">
+        <label for="sName">Name</label>
+        <input id="sName" value="${esc(g.name)}" maxlength="60">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="sAmount">Contribution</label>
+          <input id="sAmount" type="number" min="1" step="1" value="${g.amount}" inputmode="numeric">
+          <div class="hint">In ${esc(g.currency)}${state.cycleSnapshot ? " · changes apply next cycle" : ""}</div>
+        </div>
+        <div class="field">
+          <label for="sFrequency">How often</label>
+          <select id="sFrequency">
+            ${["Daily","Weekly","Bi-weekly","Monthly"].map(f => `<option ${f===g.frequency?"selected":""}>${f}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      ${feeField}
+      <div class="field">
+        <label for="sCurrency">Currency</label>
+        <select id="sCurrency">
+          <option value="__auto__" ${autoActive ? "selected" : ""}>Auto · ${esc(ZONE.currency)} (detected)</option>
+          ${currencyOptions(g.currencyManual)}
+        </select>
+        <div class="hint">${autoActive ? "Using auto-detected currency" : "Manually overridden"}</div>
+      </div>
+      ${agentField}
+      <div class="toggle-card">
+        <div class="tc-text">
+          <div class="tc-title">Auto-send receipts</div>
+          <div class="tc-hint">Opens WhatsApp with a receipt when you mark someone paid</div>
+        </div>
+        <button type="button" class="toggle ${g.autoReceipt ? "on" : ""}"
+                data-action="toggle-auto-receipt"
+                aria-pressed="${g.autoReceipt}"
+                aria-label="Auto-send receipts"></button>
+      </div>
+      <button class="btn primary block" data-action="save-settings">Save changes</button>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Storage & status</h2>
+      <div class="detect-panel">
+        <div class="detect-row"><span class="k">💾 Storage</span><span class="v">${storageLabel(mode)}</span></div>
+        <div class="detect-row"><span class="k">🌐 Connection</span><span class="v">${online ? '<span class="status-chip ok">Online</span>' : '<span class="status-chip warn">Offline</span>'}</span></div>
+        <div class="detect-row"><span class="k">📁 Mode</span><span class="v">${IS_FILE ? "USB / Local file" : "Web"}</span></div>
+        <div class="detect-row"><span class="k">🕐 Last saved</span><span class="v">${esc(last)}</span></div>
+        <div class="detect-row"><span class="k">🔢 Version</span><span class="v">${esc(APP_VERSION)}</span></div>
+        <div class="detect-row"><span class="k">📄 Auto-save to file</span><span class="v">${fsaSupported ? fsaStatus : '<span class="status-chip info">Not supported</span>'}</span></div>
+      </div>
+      <div class="detect-actions">
+        ${fsaSupported ? `
+          ${autoSaveOn
+            ? `<button class="btn sm" data-action="disable-auto-save">Disable auto-save</button>`
+            : `<button class="btn sm primary" data-action="enable-auto-save">${wantsAutoSave ? "Reconnect file" : "Save to file (auto)"}</button>`}
+        ` : `<span class="hint" style="font-size:12.5px;color:var(--muted)">
+          Auto-save to file needs Chrome or Edge.
+        </span>`}
+      </div>
+      <div class="detect-actions">
+        <button class="btn sm" data-action="export-backup">⬇ Export backup</button>
+        <button class="btn sm" data-action="import-backup">⬆ Import backup</button>
+      </div>
+    </div>
+
+    ${isMaster() ? `
+      <div class="card">
+        <h2 class="card-title">Data</h2>
+        <div class="detect-actions" style="margin-top:0">
+          <button class="btn sm" data-action="load-demo">Load demo data</button>
+          <button class="btn sm danger" data-action="reset-current">Reset this circle</button>
+          <button class="btn sm" data-action="sign-out">🔒 Sign out</button>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+function renderMaster() {
+  if (!isMaster()) return;
+  const el = document.getElementById("view-master");
+  const stats = masterStats();
+  const agentEntries = Object.values(app.agents);
+  const { totalFees, settled, pending } = stats;
+
+  const summaryHtml = `
+    <div class="card">
+      <h2 class="card-title">Management fees · all circles</h2>
+      <div class="fee-stats">
+        <div class="fee-stat">
+          <div class="lbl">Total</div>
+          <div class="val">${money(totalFees)}</div>
+        </div>
+        <div class="fee-stat">
+          <div class="lbl">Settled</div>
+          <div class="val settled">${money(settled)}</div>
+        </div>
+        <div class="fee-stat">
+          <div class="lbl">Pending</div>
+          <div class="val pending">${money(pending)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const agentRows = agentEntries.map(a => {
+    const assigned = stats.byAgent[a.id] || { circles: 0, members: 0, fees: 0 };
+    return `<div class="agent-row">
+      <div class="avatar">${esc(initials(a.name))}</div>
+      <div class="info">
+        <div class="name">${esc(a.name)}</div>
+        <div class="meta">${assigned.circles} circle${assigned.circles === 1 ? "" : "s"} · ${assigned.members} member${assigned.members === 1 ? "" : "s"}</div>
+      </div>
+      <div class="fees">${money(assigned.fees)}</div>
+      <button class="btn ghost sm" data-action="show-agent-link" data-aid="${esc(a.id)}" title="Personal link" aria-label="Personal link for ${esc(a.name)}">🔗</button>
+      <button class="btn ghost sm" data-action="edit-agent" data-aid="${esc(a.id)}" title="Edit" aria-label="Edit ${esc(a.name)}">✎</button>
+      <button class="btn ghost sm" data-action="delete-agent" data-aid="${esc(a.id)}" title="Delete" aria-label="Delete ${esc(a.name)}" style="color:var(--red)">✕</button>
+    </div>`;
+  }).join("");
+
+  const unassigned = stats.byAgent[""] || { circles: 0, members: 0, fees: 0 };
+  const unassignedHtml = unassigned.circles > 0 ? `
+    <div class="agent-row" style="opacity:.7">
+      <div class="avatar" style="background:var(--soft)">?</div>
+      <div class="info">
+        <div class="name">Unassigned</div>
+        <div class="meta">${unassigned.circles} circle${unassigned.circles === 1 ? "" : "s"} · ${unassigned.members} member${unassigned.members === 1 ? "" : "s"}</div>
+      </div>
+      <div class="fees">${money(unassigned.fees)}</div>
+    </div>
+  ` : "";
+
+  const agentsHtml = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2 class="card-title" style="margin:0">Agents · ${agentEntries.length}</h2>
+        <button class="btn purple sm" data-action="new-agent">＋ New agent</button>
+      </div>
+      ${agentEntries.length === 0 ? `
+        <div class="empty" style="padding:20px">
+          <span class="emoji">👤</span>
+          <div>No agents yet — create one to start assigning circles</div>
+        </div>
+      ` : `<div class="people">${agentRows}${unassignedHtml}</div>`}
+    </div>
+  `;
+
+  const circleRows = stats.byCircle.map(c => {
+    const agentOpts = Object.values(app.agents).map(a =>
+      `<option value="${esc(a.id)}" ${c.agentId === a.id ? "selected" : ""}>${esc(a.name)}</option>`
+    ).join("");
+    return `<div class="circle-row">
+      <div class="info">
+        <div class="name">${esc(c.name)}</div>
+        <div class="meta">${c.members} member${c.members === 1 ? "" : "s"} · ${money(c.fees)} in fees</div>
+      </div>
+      <select data-change-action="assign-agent" data-gid="${esc(c.id)}">
+        <option value="" ${!c.agentId ? "selected" : ""}>Unassigned</option>
+        ${agentOpts}
+      </select>
+    </div>`;
+  }).join("");
+
+  const circlesHtml = `
+    <div class="card">
+      <h2 class="card-title">Circles · ${stats.byCircle.length}</h2>
+      <div class="payout-list" style="margin:0">
+        ${circleRows || '<div class="payout-empty">No circles yet</div>'}
+      </div>
+    </div>
+  `;
+
+  const settingsHtml = `
+    <div class="card">
+      <h2 class="card-title">Master settings</h2>
+      <div style="margin-bottom:16px">
+        <div class="field">
+          <label>Change master PIN</label>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input id="oldPin" type="password" inputmode="numeric" maxlength="12" placeholder="Current PIN" autocomplete="off">
+            <input id="newPin" type="password" inputmode="numeric" maxlength="12" placeholder="New PIN" autocomplete="off">
+            <input id="confirmPin" type="password" inputmode="numeric" maxlength="12" placeholder="Confirm new PIN" autocomplete="off">
+          </div>
+          <button class="btn sm" data-action="change-master-pin" style="margin-top:10px">Update PIN</button>
+        </div>
+      </div>
+      <div style="padding-top:16px;border-top:1px solid var(--line)">
+        <div class="detect-actions" style="margin-top:0">
+          <button class="btn sm" data-action="sign-out">🔒 Sign out</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  el.innerHTML = `
+    ${summaryHtml}
+    ${agentsHtml}
+    ${circlesHtml}
+    ${settingsHtml}
+  `;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   17. EVENTS
+   ═══════════════════════════════════════════════════════════════════ */
+document.addEventListener("click", e => {
+  const loginTab = e.target.closest("[data-login-tab]");
+  if (loginTab && !loginTab.disabled) {
+    document.querySelectorAll('.login-tab').forEach(t => t.classList.toggle('active', t === loginTab));
+    document.getElementById('loginMasterPane').hidden = loginTab.dataset.loginTab !== 'master';
+    document.getElementById('loginAgentPane').hidden = loginTab.dataset.loginTab !== 'agent';
+    return;
+  }
+
+  const tab = e.target.closest(".tab");
+  if (tab && !tab.hidden) {
+    if (tab.dataset.view === 'master' && !isMaster()) return;
+    setTab(tab.dataset.view);
+    window.scrollTo({top:0,behavior:"smooth"});
+    return;
+  }
+
+  const btn = e.target.closest("[data-action]");
+  if (!btn || btn.disabled) return;
+  const { action, id, kind, gid, aid } = btn.dataset;
+  switch (action) {
+    // Auth
+    case "setup-master": setupMaster(); break;
+    case "login-master": loginMaster(); break;
+    case "login-agent-pin": loginAgentByPin(); break;
+    case "login-agent-link": loginAgentByLink(); break;
+    case "sign-out": signOut(); break;
+    case "reset-data": resetAppData(); break;
+    // Members
+    case "add": openMember(null); break;
+    case "edit": openMember(id); break;
+    case "remove": removeMember(id); break;
+    case "paid": togglePaid(id); break;
+    case "bulk-paid": bulkMarkPaid(); break;
+    case "up": moveMember(id, -1); break;
+    case "down": moveMember(id, 1); break;
+    case "close": closeCycle(); break;
+    case "wa": {
+      const m = state.members.find(x => x.id === id);
+      if (m) openWhatsApp(m, kind || "remind");
+      break;
+    }
+    // Settings
+    case "save-settings": saveSettings(); break;
+    case "toggle-auto-receipt": toggleAutoReceipt(btn); break;
+    case "re-detect": reDetect(); break;
+    case "reset-current": resetCurrentGroup(); break;
+    case "load-demo": loadDemo(); break;
+    case "export-backup": exportBackup(); break;
+    case "import-backup": triggerImport(); break;
+    case "enable-auto-save": pickSaveFile(); break;
+    case "disable-auto-save": disableAutoSaveFile(); break;
+    case "change-agent-pin": changeAgentOwnPin(); break;
+    // Groups
+    case "open-groups": openGroupPicker(); break;
+    case "close-groups": closeGroupDialog(); break;
+    case "new-group": newGroup(); break;
+    case "switch-group": switchGroup(gid); break;
+    case "rename-group": renameGroup(gid); break;
+    case "delete-group": deleteGroup(gid); break;
+    // Master
+    case "new-agent": newAgent(); break;
+    case "edit-agent": editAgent(aid); break;
+    case "delete-agent": deleteAgent(aid); break;
+    case "show-agent-link": showAgentLinkDialog(aid); break;
+    case "copy-agent-link": copyAgentLink(aid); break;
+    case "send-agent-link": sendAgentLinkWhatsApp(aid); break;
+    case "regen-agent-link": regenerateAgentToken(aid); break;
+    case "change-master-pin": changeMasterPin(); break;
+  }
+});
+
+document.addEventListener("change", e => {
+  const sel = e.target.closest("[data-change-action]");
+  if (!sel) return;
+  if (sel.dataset.changeAction === "assign-agent") {
+    assignAgentToGroup(sel.dataset.gid, sel.value || null);
+  }
+});
+
+document.getElementById("memberForm").addEventListener("submit", saveMember);
+document.getElementById("dlgCancel").addEventListener("click", () => {
+  const dlg = document.getElementById("memberDialog");
+  if (dlg.open) dlg.close();
+  editingId = null;
+});
+
+// Agent dialog
+document.body.insertAdjacentHTML("beforeend", `
+  <dialog id="agentDialog">
+    <form method="dialog" id="agentForm">
+      <div class="dlg-head">
+        <h3 id="agTitle">New agent</h3>
+        <p>Agents get their own login and personal link</p>
+      </div>
+      <div class="dlg-body">
+        <div class="field">
+          <label for="agName">Agent name</label>
+          <input id="agName" required maxlength="60" placeholder="e.g. Alice Mwangi" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="agPhone">WhatsApp (optional)</label>
+          <input id="agPhone" maxlength="24" placeholder="+254..." autocomplete="off" inputmode="tel">
+        </div>
+        <div class="field">
+          <label for="agPin">Agent PIN</label>
+          <input id="agPin" type="text" inputmode="numeric" maxlength="12" placeholder="4+ characters" autocomplete="new-password">
+          <div class="hint" id="agPinHint">Set the agent's initial PIN. They can change it after signing in.</div>
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn" id="agCancel">Cancel</button>
+        <button type="submit" class="btn purple">Save</button>
+      </div>
+    </form>
+  </dialog>
+`);
+document.getElementById("agentForm").addEventListener("submit", saveAgent);
+document.getElementById("agCancel").addEventListener("click", () => {
+  document.getElementById("agentDialog").close();
+  editingAgentId = null;
+});
+
+document.getElementById("importFile").addEventListener("change", e => {
+  handleImport(e.target.files[0]);
+  e.target.value = "";
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   18. PWA
+   ═══════════════════════════════════════════════════════════════════ */
+(function setupPWA() {
+  const iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#16a34a"/><text x="96" y="132" font-size="100" text-anchor="middle" fill="white" font-family="system-ui,sans-serif">◎</text></svg>';
+  const manifest = {
+    name: APP_TITLE, short_name: "Susu", start_url: ".", scope: ".",
+    display: "standalone", orientation: "portrait",
+    background_color: "#f7f8fa", theme_color: "#16a34a",
+    icons: [{ src: "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg),
+              sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }]
+  };
+  try {
+    const link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = "data:application/manifest+json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifest));
+    document.head.appendChild(link);
+    const apple = document.createElement("link");
+    apple.rel = "apple-touch-icon";
+    apple.href = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
+    document.head.appendChild(apple);
+  } catch (e) {}
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   19. BOOT
+   ═══════════════════════════════════════════════════════════════════ */
+(async () => {
+  try {
+    await Storage.init();
+    await loadState();
+
+    // URL hash auto-login
+    const linkAuth = parseAgentHash(location.hash);
+    if (linkAuth) {
+      const agent = app.agents[linkAuth.agentId];
+      if (agent && agent.token === linkAuth.token) {
+        setSession({ role: 'agent', agentId: linkAuth.agentId });
+        ensureActiveGroupVisible();
+        stripHash();
+      } else {
+        stripHash();
+        setTimeout(() => toast("Invalid or expired agent link"), 600);
+      }
+    }
+
+    // Resume saved session
+    session = getSession();
+    if (session) {
+      if (session.role === 'agent' && !app.agents[session.agentId]) clearSession();
+      if (session.role === 'master' && !app.master.pin) clearSession();
+      session = getSession();
+    }
+
+    ensureCycleOrder();
+    if (isAgent()) ensureActiveGroupVisible();
+    render();
+    setInterval(updateStatusUI, 30000);
+
+    if (Storage.getMode() === "memory" && IS_FILE) {
+      setTimeout(() => toast("file:// — export a backup or enable auto-save"), 1200);
+    }
+  } catch (e) {
+    console.error("Boot failed:", e);
+    app = blankApp();
+    state = app.groups[app.activeGroupId];
+    formatter = makeMoneyFormatter(LOCALE, state.group.currency);
+    try { render(); } catch (_) {}
+    toast("Recovered from startup error");
+  }
+})();
+</script>
+</body>
+</html>
